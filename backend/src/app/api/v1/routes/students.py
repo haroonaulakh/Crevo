@@ -1,0 +1,203 @@
+from fastapi import APIRouter, HTTPException
+from typing import Dict, Any, List
+
+from src.app.db.database import get_supabase_client
+from src.app.models.schemas import StudentCreate, SearchRequest
+
+
+router = APIRouter()
+
+
+def format_student_response(student: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Format raw Supabase row from `students` table into the structure
+    expected by the frontend.
+    """
+    # Use reg_no as a stable identifier (no separate id column in table)
+    reg_no = student.get("reg_no")
+
+    return {
+        "id": reg_no,
+        "reg_no": reg_no,
+        "student_name": student.get("student_name"),
+        "gender": student.get("gender"),
+        "dob": student.get("dob"),
+        "admission_date": student.get("admission_date"),
+        "f_g_name": student.get("f_g_name"),
+        "f_g_contact": student.get("f_g_contact"),
+        "class_enrolled": student.get("class_enrolled"),
+        "section": student.get("section"),
+        "group": student.get("group"),
+        "monthly_fee": student.get("monthly_fee"),
+    }
+
+
+@router.get("/")
+async def get_all_students() -> List[Dict[str, Any]]:
+    """Return all students from the `students` table."""
+    try:
+        supabase = get_supabase_client()
+
+        result = supabase.table("students").select("*").execute()
+
+        if not getattr(result, "data", None):
+            return []
+
+        return [format_student_response(row) for row in result.data]
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error fetching students: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error fetching students: {error_msg}")
+
+
+@router.post("/search/name")
+async def search_students_by_name(search_request: SearchRequest) -> List[Dict[str, Any]]:
+    """
+    Search students by first name or last name (case-insensitive, partial match).
+    """
+    try:
+        supabase = get_supabase_client()
+        query = search_request.query.strip()
+
+        if not query:
+            return []
+
+        results: List[Dict[str, Any]] = []
+        existing_keys = set()
+
+        # Search in first name
+        try:
+            fname_result = supabase.table("students").select("*").ilike("student_name", f"%{query}%").execute()
+            if fname_result.data:
+                for student in fname_result.data:
+                    key = student.get("reg_no") or str(student)
+                    if key not in existing_keys:
+                        results.append(student)
+                        existing_keys.add(key)
+        except Exception as e:
+            print(f"Error in student_name search: {e}")
+
+        return [format_student_response(row) for row in results]
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error searching students by name: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error searching students by name: {error_msg}")
+
+
+@router.post("/search")
+async def search_students(search_request: SearchRequest) -> List[Dict[str, Any]]:
+    """
+    Search students by registration number (exact / partial) OR by name.
+    """
+    try:
+        supabase = get_supabase_client()
+        query = search_request.query.strip()
+
+        if not query:
+            return []
+
+        results: List[Dict[str, Any]] = []
+        existing_keys = set()
+
+        # If numeric, try exact reg_no match first
+        if query.isdigit():
+            try:
+                query_num = int(query)
+                exact_result = supabase.table("students").select("*").eq("reg_no", query_num).execute()
+                if exact_result.data:
+                    for student in exact_result.data:
+                        key = student.get("reg_no") or str(student)
+                        if key not in existing_keys:
+                            results.append(student)
+                            existing_keys.add(key)
+            except Exception as e:
+                print(f"Error in exact reg_no search: {e}")
+
+        # Name search (first and last name, case-insensitive partial)
+        for field in ("student_name", "gender"):
+            try:
+                name_result = supabase.table("students").select("*").ilike(field, f"%{query}%").execute()
+                if name_result.data:
+                    for student in name_result.data:
+                        key = student.get("reg_no") or str(student)
+                        if key not in existing_keys:
+                            results.append(student)
+                            existing_keys.add(key)
+            except Exception as e:
+                print(f"Error in {field} search: {e}")
+
+        # If numeric and still no results, try partial match on reg_no as text
+        if query.isdigit() and not results:
+            try:
+                all_result = supabase.table("students").select("*").execute()
+                if all_result.data:
+                    query_str = str(query)
+                    for student in all_result.data:
+                        reg_val = str(student.get("reg_no", ""))
+                        if query_str in reg_val:
+                            key = student.get("reg_no") or str(student)
+                            if key not in existing_keys:
+                                results.append(student)
+                                existing_keys.add(key)
+            except Exception as e:
+                print(f"Error in partial reg_no search: {e}")
+
+        return [format_student_response(row) for row in results]
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error searching students: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error searching students: {error_msg}")
+
+
+@router.post("/")
+async def add_student(student: StudentCreate) -> Dict[str, Any]:
+    """Add a new student to the database."""
+    try:
+        supabase = get_supabase_client()
+
+        # Convert Pydantic model to dict, using aliases for column names
+        # Use mode='json' to properly serialize date objects
+        data = student.model_dump(mode='json', exclude_unset=True, by_alias=True)
+
+        # Ensure numeric fields are ints
+        int_fields = ["reg_no", "monthly_fee"]
+        for field in int_fields:
+            if field in data and data[field] is not None:
+                try:
+                    data[field] = int(data[field])
+                except (ValueError, TypeError):
+                    # If conversion fails, drop the field to let DB defaults/constraints handle it
+                    data.pop(field, None)
+
+        result = supabase.table("students").insert(data).execute()
+
+        if not getattr(result, "data", None):
+            raise HTTPException(status_code=500, detail="Failed to add student")
+
+        return format_student_response(result.data[0])
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error adding student: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error adding student: {error_msg}")
+
+
+@router.get("/{reg_no}")
+async def get_student_by_reg_no(reg_no: int) -> Dict[str, Any]:
+    """Get a single student by registration number (primary key)."""
+    try:
+        supabase = get_supabase_client()
+
+        result = supabase.table("students").select("*").eq("reg_no", reg_no).execute()
+
+        if not getattr(result, "data", None):
+            raise HTTPException(status_code=404, detail="Student not found")
+
+        return format_student_response(result.data[0])
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error fetching student: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error fetching student: {error_msg}")

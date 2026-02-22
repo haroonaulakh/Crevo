@@ -105,6 +105,41 @@ export const studentsAPI = {
 
     return response.json();
   },
+
+  // Update a student
+  update: async (reg_no, studentData) => {
+    const response = await fetch(`${API_BASE_URL}/api/v1/students/${reg_no}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(studentData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Failed to update student');
+    }
+
+    return response.json();
+  },
+
+  // Delete a student
+  delete: async (reg_no) => {
+    const response = await fetch(`${API_BASE_URL}/api/v1/students/${reg_no}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Failed to delete student');
+    }
+
+    return response.json();
+  },
 };
 
 

@@ -1,0 +1,244 @@
+@keyframes studentsGradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.students-container {
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(-45deg, #e6f2ff, #ffffff, #d6ebff, #e0f2fe);
+  background-size: 400% 400%;
+  animation: studentsGradientBG 15s ease infinite;
+}
+
+.students-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.75rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 18px 35px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(15, 23, 42, 0.04);
+  margin-bottom: 2rem;
+  animation: cardSlideIn 0.5s ease backwards;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e0;
+  background: #f8fafc;
+  color: #4a5568;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #edf2f7;
+  color: #1a202c;
+  transform: translateX(-2px);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.students-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Base styles inherited */
+.search-section {
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(15, 23, 42, 0.03);
+  margin-bottom: 1.75rem;
+  animation: cardSlideIn 0.6s ease backwards 0.1s;
+}
+
+.action-buttons-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.25rem;
+  background: #f1f5f9;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.35rem;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  color: #003366;
+}
+
+.toggle-btn.active {
+  background: #ffffff;
+  color: #0052a3;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Table Styles */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  animation: cardSlideIn 0.6s ease backwards 0.2s;
+}
+
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.students-table th {
+  background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.students-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #edf2f7;
+  font-size: 0.9rem;
+  color: #1a202c;
+  vertical-align: middle;
+}
+
+.students-table tr:last-child td {
+  border-bottom: none;
+}
+
+.students-table tr {
+  transition: background-color 0.15s ease;
+}
+
+.students-table tr:hover {
+  background-color: #ebf4ff;
+}
+
+/* Card Grid */
+.students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+}
+
+.student-card {
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1.4rem 1.3rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+  animation: cardSlideIn 0.5s ease backwards;
+}
+
+.student-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: #90cdf4;
+  box-shadow: 0 15px 30px rgba(15, 23, 42, 0.12);
+}
+
+.student-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.student-header-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: #1a202c;
+  letter-spacing: -0.01em;
+}
+
+/* Modal animations */
+.modal-overlay {
+  animation: fadeIn 0.25s ease forwards;
+}
+
+.modal-content {
+  animation: modalSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  border-radius: 1rem !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.modal-content h2,
+.modal-content h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}

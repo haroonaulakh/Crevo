@@ -4,35 +4,30 @@ from datetime import date
 
 
 class StudentCreate(BaseModel):
-    """
-    Schema for creating a new student.
+    
+    #Schema for creating a new student.
 
-    Database table columns:
-    - reg_no (int, primary key, not null)
-    - student_name (text)
-    - gender (text)
-    - dob (date)
-    - admission_date (date)
-    - f_g_name (text)
-    - f_g_contact (text)
-    - class_enrolled (text)
-    - section (text)
-    - group (text)
-    - monthly_fee (int)
-    - fee_due (int)
-    """
+    #Database table columns:
 
     reg_no: int  # primary key, never null
     student_name: str
     gender: str
+    b_form: str
     dob: date  # Date format
     admission_date: date  # Date format
     f_g_name: str  # Father's/Guardian's Name
+    f_g_cnic: str
     f_g_contact: str  # Father's/Guardian's Contact
+    address: str 
     class_enrolled: str  # Class enrolled in (text)
     section: str  # Section (text)
     group: str  # Group (text)
+    class_of_admission: str
+    caste : str
     monthly_fee: int  # Monthly fee (integer)
+    no_fee : str
+  
+    
 
     class Config:
         populate_by_name = True
@@ -40,37 +35,53 @@ class StudentCreate(BaseModel):
 
 
 class StudentResponse(BaseModel):
-    """
-    Schema for returning student data to the frontend.
-
-    Uses aliases so the JSON keys match what the React app expects:
-    - reg_no: "reg_no"
-    - student_name: "student_name"
-    - gender: "gender"
-    - dob: "dob"
-    - admission_date: "admission_date"
-    - f_g_name: "f_g_name"
-    - f_g_contact: "f_g_contact"
-    - class_enrolled: "class_enrolled"
-    - section: "section"
-    - group: "group"
-    - monthly_fee: "monthly_fee"
-    """
-
-    reg_no: int  # Primary key, never null
+    
+    # Schema for returning student data to the frontend.
+    # Uses aliases so the JSON keys match what the React app expects:
+    
+    reg_no: int  # primary key, never null
     student_name: str
     gender: str
+    b_form: str
     dob: date  # Date format
     admission_date: date  # Date format
     f_g_name: str  # Father's/Guardian's Name
+    f_g_cnic: str
     f_g_contact: str  # Father's/Guardian's Contact
+    address: str 
     class_enrolled: str  # Class enrolled in (text)
     section: str  # Section (text)
     group: str  # Group (text)
+    class_of_admission: str
+    caste : str
     monthly_fee: int  # Monthly fee (integer)
+    no_fee : str
 
     class Config:
         from_attributes = True
+        populate_by_name = True
+
+
+class StudentUpdate(BaseModel):
+    """Schema for updating an existing student."""
+    student_name: Optional[str] = None
+    gender: Optional[str] = None
+    b_form: Optional[str] = None
+    dob: Optional[date] = None
+    admission_date: Optional[date] = None
+    f_g_name: Optional[str] = None
+    f_g_cnic: Optional[str] = None
+    f_g_contact: Optional[str] = None
+    address: Optional[str] = None
+    class_enrolled: Optional[str] = None
+    section: Optional[str] = None
+    group: Optional[str] = None
+    class_of_admission: Optional[str] = None
+    caste: Optional[str] = None
+    monthly_fee: Optional[int] = None
+    no_fee: Optional[str] = None
+
+    class Config:
         populate_by_name = True
 
 

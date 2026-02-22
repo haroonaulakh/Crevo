@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import Dict, Any, List
 
 from src.app.db.database import get_supabase_client
-from src.app.models.schemas import StudentCreate, SearchRequest
+from src.app.models.schemas import StudentCreate, SearchRequest, StudentUpdate
 
 
 router = APIRouter()
@@ -21,14 +21,20 @@ def format_student_response(student: Dict[str, Any]) -> Dict[str, Any]:
         "reg_no": reg_no,
         "student_name": student.get("student_name"),
         "gender": student.get("gender"),
+        "b_form": student.get("b_form"),
         "dob": student.get("dob"),
         "admission_date": student.get("admission_date"),
         "f_g_name": student.get("f_g_name"),
+        "f_g_cnic": student.get("f_g_cnic"),
         "f_g_contact": student.get("f_g_contact"),
+        "address": student.get("address"),
         "class_enrolled": student.get("class_enrolled"),
         "section": student.get("section"),
         "group": student.get("group"),
+        "class_of_admission": student.get("class_of_admission"),
+        "caste": student.get("caste"),
         "monthly_fee": student.get("monthly_fee"),
+        "no_fee": student.get("no_fee"),
     }
 
 
@@ -201,3 +207,37 @@ async def get_student_by_reg_no(reg_no: int) -> Dict[str, Any]:
         error_msg = str(e)
         print(f"Error fetching student: {error_msg}")
         raise HTTPException(status_code=500, detail=f"Error fetching student: {error_msg}")
+
+
+@router.put("/{reg_no}")
+async def update_student(reg_no: int, student_update: StudentUpdate) -> Dict[str, Any]:
+    """Update an existing student by registration number."""
+    try:
+        supabase = get_supabase_client()
+
+        # Convert Pydantic model to dict, drop unchanged/unset fields
+        update_data = student_update.model_dump(mode='json', exclude_unset=True, by_alias=True)
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No fields provided to update")
+
+        # Ensure numeric fields are ints
+        if "monthly_fee" in update_data and update_data["monthly_fee"] is not None:
+            try:
+                update_data["monthly_fee"] = int(update_data["monthly_fee"])
+            except (ValueError, TypeError):
+                update_data.pop("monthly_fee", None)
+
+        result = supabase.table("students").update(update_data).eq("reg_no", reg_no).execute()
+
+        if not getattr(result, "data", None) or len(result.data) == 0:
+            raise HTTPException(status_code=404, detail="Student not found or no changes made")
+
+        return format_student_response(result.data[0])
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error updating student: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error updating student: {error_msg}")
+

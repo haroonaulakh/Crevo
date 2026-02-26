@@ -80,9 +80,9 @@
 
 .form-toggle {
   display: flex;
-  border-radius: 999px;
+  border-radius: 10px;
   background: #edf2f7;
-  padding: 0.25rem;
+ 
   margin-bottom: 1.75rem;
 }
 

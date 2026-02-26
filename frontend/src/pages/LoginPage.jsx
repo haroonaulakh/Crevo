@@ -215,7 +215,7 @@ export default function LoginPage() {
                     <input
                       type="text"
                       name="firstName"
-                      placeholder="John"
+                      placeholder="First Name"
                       value={formData.firstName}
                       onChange={handleChange}
                       className="form-input"
@@ -230,7 +230,7 @@ export default function LoginPage() {
                     <input
                       type="text"
                       name="lastName"
-                      placeholder="Doe"
+                      placeholder="Last Name"
                       value={formData.lastName}
                       onChange={handleChange}
                       className="form-input"
@@ -248,7 +248,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     name="email"
-                    placeholder="you@example.com"
+                    placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
                     className="form-input"

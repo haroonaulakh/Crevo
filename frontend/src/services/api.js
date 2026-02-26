@@ -164,7 +164,7 @@ export const studentsAPI = {
 export const withdrawnAPI = {
   getAll: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/withdrawn/`, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/withdrawn`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -180,6 +180,23 @@ export const withdrawnAPI = {
     } catch (error) {
       throw new Error(error.message || 'Failed to fetch withdrawn students');
     }
+  },
+
+  add: async (studentData) => {
+    const response = await fetch(`${API_BASE_URL}/api/v1/withdrawn`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(studentData),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Failed to add withdrawn student record');
+    }
+
+    return response.json();
   },
 
   delete: async (reg_no) => {

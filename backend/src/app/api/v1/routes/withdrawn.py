@@ -1,10 +1,33 @@
 from fastapi import APIRouter, HTTPException
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+from pydantic import BaseModel
 
 from src.app.db.database import get_supabase_client
 
 
 router = APIRouter()
+
+
+class WithdrawnStudentCreate(BaseModel):
+    """Schema for manually adding a withdrawn student record."""
+    reg_no: int
+    student_name: str
+    gender: Optional[str] = None
+    b_form: Optional[str] = None
+    dob: Optional[str] = None
+    admission_date: Optional[str] = None
+    f_g_name: Optional[str] = None
+    f_g_cnic: Optional[str] = None
+    f_g_contact: Optional[str] = None
+    address: Optional[str] = None
+    class_enrolled: Optional[str] = None
+    section: Optional[str] = None
+    group: Optional[str] = None
+    class_of_admission: Optional[str] = None
+    caste: Optional[str] = None
+    monthly_fee: Optional[int] = None
+    no_fee: Optional[str] = None
+    class_of_withdrawl: Optional[str] = None
 
 
 def format_withdrawn_response(student: Dict[str, Any]) -> Dict[str, Any]:
@@ -37,6 +60,7 @@ def format_withdrawn_response(student: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+@router.get("")
 @router.get("/")
 async def get_all_withdrawn_students() -> List[Dict[str, Any]]:
     """Return all students from the `students_withdrawn` table."""
@@ -53,6 +77,35 @@ async def get_all_withdrawn_students() -> List[Dict[str, Any]]:
         error_msg = str(e)
         print(f"Error fetching withdrawn students: {error_msg}")
         raise HTTPException(status_code=500, detail=f"Error fetching withdrawn students: {error_msg}")
+
+
+@router.post("")
+@router.post("/")
+async def add_withdrawn_student_manually(student: WithdrawnStudentCreate) -> Dict[str, Any]:
+    """Manually add a record to the students_withdrawn table."""
+    try:
+        supabase = get_supabase_client()
+
+        # Check if reg_no already exists in withdrawn table
+        check = supabase.table("students_withdrawn").select("reg_no").eq("reg_no", student.reg_no).execute()
+        if getattr(check, "data", None) and len(check.data) > 0:
+            raise HTTPException(status_code=409, detail=f"A withdrawn record for reg_no {student.reg_no} already exists.")
+
+        # Build insert data, exclude None values
+        data = {k: v for k, v in student.model_dump().items() if v is not None}
+
+        result = supabase.table("students_withdrawn").insert(data).execute()
+
+        if not getattr(result, "data", None):
+            raise HTTPException(status_code=500, detail="Failed to add withdrawn student record")
+
+        return format_withdrawn_response(result.data[0])
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error adding withdrawn student: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error adding withdrawn student: {error_msg}")
 
 
 @router.delete("/{reg_no}")

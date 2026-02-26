@@ -161,3 +161,107 @@
         padding: 0.75rem;
     }
 }
+
+/* ===== Add Record button in header ===== */
+.add-withdrawn-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    color: #fff;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(237, 137, 54, 0.35);
+}
+
+.add-withdrawn-btn:hover {
+    background: linear-gradient(135deg, #dd6b20, #c05621);
+    box-shadow: 0 4px 14px rgba(237, 137, 54, 0.45);
+    transform: translateY(-1px);
+}
+
+/* ===== Add Withdrawn Modal ===== */
+.add-withdrawn-modal {
+    max-width: 780px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.add-form-hint {
+    font-size: 0.8rem;
+    color: #92400e;
+    margin: 0 0 1rem 0;
+}
+
+.required-star {
+    color: #e53e3e;
+    font-weight: 700;
+}
+
+.add-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 0.85rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group-wide {
+    grid-column: 1 / -1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.5rem 0.75rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #1f2937;
+    background: #fff;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #ed8936;
+    box-shadow: 0 0 0 3px rgba(237, 137, 54, 0.15);
+}
+
+.add-form-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff5f5;
+    border: 1px solid #fc8181;
+    color: #c53030;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+
+.add-withdrawn-submit-btn {
+    background: linear-gradient(135deg, #ed8936, #dd6b20) !important;
+}
+
+.add-withdrawn-submit-btn:hover {
+    background: linear-gradient(135deg, #dd6b20, #c05621) !important;
+}

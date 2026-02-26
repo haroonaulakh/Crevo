@@ -1,9 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, LogOut, Download, ArrowLeft, LayoutGrid, Table as TableIcon, UserMinus, Trash2, AlertTriangle, CheckCircle, X } from 'lucide-react';
+import { Search, LogOut, Download, ArrowLeft, LayoutGrid, Table as TableIcon, UserMinus, Trash2, AlertTriangle, CheckCircle, X, PlusCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { withdrawnAPI } from '../services/api';
 import './WithdrawnStudents.css';
+
+const CLASSES = ['All Classes', 'PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const CLASS_OPTIONS = ['PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+const EMPTY_FORM = {
+    reg_no: '',
+    student_name: '',
+    gender: '',
+    b_form: '',
+    dob: '',
+    admission_date: '',
+    f_g_name: '',
+    f_g_cnic: '',
+    f_g_contact: '',
+    address: '',
+    class_enrolled: '',
+    section: '',
+    group: '',
+    class_of_admission: '',
+    caste: '',
+    monthly_fee: '',
+    no_fee: '',
+    class_of_withdrawl: '',
+};
 
 export default function WithdrawnStudents() {
     const navigate = useNavigate();
@@ -21,7 +45,12 @@ export default function WithdrawnStudents() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
 
-    const CLASSES = ['All Classes', 'PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    // --- Manual Add state ---
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [addForm, setAddForm] = useState(EMPTY_FORM);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [addError, setAddError] = useState('');
+    const [showAddSuccess, setShowAddSuccess] = useState(false);
 
     useEffect(() => {
         const isAuthenticated = localStorage.getItem('isAuthenticated');
@@ -143,6 +172,56 @@ export default function WithdrawnStudents() {
         }
     };
 
+    // ---- Manual Add handlers ----
+    const handleAddFormChange = (e) => {
+        const { name, value } = e.target;
+        setAddForm(prev => ({ ...prev, [name]: value }));
+        setAddError('');
+    };
+
+    const handleAddSubmit = async (e) => {
+        e.preventDefault();
+        setAddError('');
+
+        if (!addForm.reg_no || !addForm.student_name) {
+            setAddError('Registration Number and Student Name are required.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const payload = {
+                ...addForm,
+                reg_no: parseInt(addForm.reg_no, 10),
+                monthly_fee: addForm.monthly_fee !== '' ? parseInt(addForm.monthly_fee, 10) : null,
+                dob: addForm.dob || null,
+                admission_date: addForm.admission_date || null,
+            };
+            // Remove empty strings so backend treats them as optional
+            Object.keys(payload).forEach(k => {
+                if (payload[k] === '') payload[k] = null;
+            });
+
+            const newRecord = await withdrawnAPI.add(payload);
+            setAllWithdrawn(prev => [newRecord, ...prev]);
+            setShowAddModal(false);
+            setAddForm(EMPTY_FORM);
+            setShowAddSuccess(true);
+        } catch (error) {
+            setAddError(error.message || 'Failed to add record.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleCloseAddModal = () => {
+        if (!isSubmitting) {
+            setShowAddModal(false);
+            setAddForm(EMPTY_FORM);
+            setAddError('');
+        }
+    };
+
     return (
         <div className="withdrawn-container">
             <div className="withdrawn-header">
@@ -160,6 +239,10 @@ export default function WithdrawnStudents() {
                     </div>
                 </div>
                 <div className="header-actions">
+                    <button className="add-withdrawn-btn" onClick={() => setShowAddModal(true)}>
+                        <PlusCircle size={18} />
+                        <span>Add Record</span>
+                    </button>
                     <button onClick={handleLogout} className="logout-btn">
                         <LogOut size={18} />
                         <span className="logout-text">Logout</span>
@@ -372,6 +455,134 @@ export default function WithdrawnStudents() {
                 )}
             </div>
 
+            {/* ===== Manual Add Modal ===== */}
+            {showAddModal && (
+                <div className="modal-overlay" onClick={handleCloseAddModal}>
+                    <div className="modal-content add-withdrawn-modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2><PlusCircle size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Add Withdrawn Record</h2>
+                            <button className="modal-close-btn" onClick={handleCloseAddModal} disabled={isSubmitting}>
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <form className="add-withdrawn-form" onSubmit={handleAddSubmit}>
+                            <p className="add-form-hint">Fields marked <span className="required-star">*</span> are required.</p>
+
+                            <div className="add-form-grid">
+                                {/* Row 1 */}
+                                <div className="form-group">
+                                    <label>Reg. No. <span className="required-star">*</span></label>
+                                    <input type="number" name="reg_no" value={addForm.reg_no} onChange={handleAddFormChange} placeholder="e.g. 101" required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Student Name <span className="required-star">*</span></label>
+                                    <input type="text" name="student_name" value={addForm.student_name} onChange={handleAddFormChange} placeholder="Full name" required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Gender</label>
+                                    <select name="gender" value={addForm.gender} onChange={handleAddFormChange}>
+                                        <option value="">Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>B-Form</label>
+                                    <input type="text" name="b_form" value={addForm.b_form} onChange={handleAddFormChange} placeholder="B-Form number" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" name="dob" value={addForm.dob} onChange={handleAddFormChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Admission Date</label>
+                                    <input type="date" name="admission_date" value={addForm.admission_date} onChange={handleAddFormChange} />
+                                </div>
+
+                                {/* Row 2 */}
+                                <div className="form-group">
+                                    <label>Father/Guardian Name</label>
+                                    <input type="text" name="f_g_name" value={addForm.f_g_name} onChange={handleAddFormChange} placeholder="Guardian name" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Guardian CNIC</label>
+                                    <input type="text" name="f_g_cnic" value={addForm.f_g_cnic} onChange={handleAddFormChange} placeholder="CNIC number" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Guardian Contact</label>
+                                    <input type="text" name="f_g_contact" value={addForm.f_g_contact} onChange={handleAddFormChange} placeholder="Phone number" />
+                                </div>
+                                <div className="form-group form-group-wide">
+                                    <label>Address</label>
+                                    <input type="text" name="address" value={addForm.address} onChange={handleAddFormChange} placeholder="Full address" />
+                                </div>
+
+                                {/* Row 3 */}
+                                <div className="form-group">
+                                    <label>Class Enrolled</label>
+                                    <select name="class_enrolled" value={addForm.class_enrolled} onChange={handleAddFormChange}>
+                                        <option value="">Select</option>
+                                        {CLASS_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Class of Withdrawal</label>
+                                    <select name="class_of_withdrawl" value={addForm.class_of_withdrawl} onChange={handleAddFormChange}>
+                                        <option value="">Select</option>
+                                        {CLASS_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Section</label>
+                                    <input type="text" name="section" value={addForm.section} onChange={handleAddFormChange} placeholder="e.g. A" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Group</label>
+                                    <input type="text" name="group" value={addForm.group} onChange={handleAddFormChange} placeholder="e.g. Science" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Class of Admission</label>
+                                    <select name="class_of_admission" value={addForm.class_of_admission} onChange={handleAddFormChange}>
+                                        <option value="">Select</option>
+                                        {CLASS_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Caste</label>
+                                    <input type="text" name="caste" value={addForm.caste} onChange={handleAddFormChange} placeholder="Caste" />
+                                </div>
+                                <div className="form-group">
+                                    <label>Monthly Fee</label>
+                                    <input type="number" name="monthly_fee" value={addForm.monthly_fee} onChange={handleAddFormChange} placeholder="e.g. 500" />
+                                </div>
+                                <div className="form-group">
+                                    <label>No Fee</label>
+                                    <select name="no_fee" value={addForm.no_fee} onChange={handleAddFormChange}>
+                                        <option value="">Select</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {addError && (
+                                <div className="add-form-error">
+                                    <AlertTriangle size={15} /> {addError}
+                                </div>
+                            )}
+
+                            <div className="modal-footer-btns">
+                                <button type="button" className="modal-cancel-btn" onClick={handleCloseAddModal} disabled={isSubmitting}>Cancel</button>
+                                <button type="submit" className="modal-submit-btn add-withdrawn-submit-btn" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Adding...' : 'Add Record'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* ===== Delete Confirmation Modal ===== */}
             {studentToDelete && (
                 <div className="modal-overlay" onClick={() => !isDeleting && setStudentToDelete(null)}>
@@ -420,6 +631,22 @@ export default function WithdrawnStudents() {
                         <p className="success-modal-desc">The withdrawn student record has been permanently removed.</p>
                         <div className="modal-footer-btns" style={{ justifyContent: 'center' }}>
                             <button className="modal-submit-btn modal-red-btn" onClick={() => setShowDeleteSuccess(false)}>Done</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== Add Success Modal ===== */}
+            {showAddSuccess && (
+                <div className="modal-overlay" onClick={() => setShowAddSuccess(false)}>
+                    <div className="modal-content success-modal-centered" onClick={e => e.stopPropagation()}>
+                        <div className="success-icon-wrap">
+                            <CheckCircle size={40} />
+                        </div>
+                        <p className="success-modal-title">Record Added</p>
+                        <p className="success-modal-desc">The withdrawn student record has been successfully added to the archive.</p>
+                        <div className="modal-footer-btns" style={{ justifyContent: 'center' }}>
+                            <button className="modal-submit-btn add-withdrawn-submit-btn" onClick={() => setShowAddSuccess(false)}>Done</button>
                         </div>
                     </div>
                 </div>

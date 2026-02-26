@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import Dict, Any, List
 
 from src.app.db.database import get_supabase_client
-from src.app.models.schemas import StudentCreate, SearchRequest, StudentUpdate
+from src.app.models.schemas import StudentCreate, SearchRequest, StudentUpdate, WithdrawRequest
 
 
 router = APIRouter()
@@ -241,3 +241,58 @@ async def update_student(reg_no: int, student_update: StudentUpdate) -> Dict[str
         print(f"Error updating student: {error_msg}")
         raise HTTPException(status_code=500, detail=f"Error updating student: {error_msg}")
 
+
+
+@router.delete("/{reg_no}")
+async def delete_student_permanently(reg_no: int) -> Dict[str, Any]:
+    """Permanently delete a student from the students table only."""
+    try:
+        supabase = get_supabase_client()
+
+        # Verify student exists first
+        check = supabase.table("students").select("reg_no").eq("reg_no", reg_no).execute()
+        if not getattr(check, "data", None) or len(check.data) == 0:
+            raise HTTPException(status_code=404, detail="Student not found")
+
+        supabase.table("students").delete().eq("reg_no", reg_no).execute()
+
+        return {"success": True, "message": f"Student {reg_no} permanently deleted."}
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error permanently deleting student: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error deleting student: {error_msg}")
+
+
+@router.post("/{reg_no}/withdraw")
+async def withdraw_student(reg_no: int, withdraw_request: WithdrawRequest) -> Dict[str, Any]:
+    """Copy student to students_withdrawn with class_of_withdrawal, then remove from students."""
+    try:
+        supabase = get_supabase_client()
+
+        # Fetch the student
+        result = supabase.table("students").select("*").eq("reg_no", reg_no).execute()
+        if not getattr(result, "data", None) or len(result.data) == 0:
+            raise HTTPException(status_code=404, detail="Student not found")
+
+        student_data = result.data[0]
+
+        # Build withdrawn record – add class_of_withdrawl
+        withdrawn_data = {**student_data, "class_of_withdrawl": withdraw_request.class_of_withdrawl}
+
+        # Insert into students_withdrawn
+        insert_result = supabase.table("students_withdrawn").insert(withdrawn_data).execute()
+        if not getattr(insert_result, "data", None):
+            raise HTTPException(status_code=500, detail="Failed to insert student into withdrawn table")
+
+        # Delete from students
+        supabase.table("students").delete().eq("reg_no", reg_no).execute()
+
+        return {"success": True, "message": f"Student {reg_no} withdrawn successfully."}
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error withdrawing student: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Error withdrawing student: {error_msg}")

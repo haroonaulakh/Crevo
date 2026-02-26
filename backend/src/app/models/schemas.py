@@ -101,3 +101,8 @@ class LoginResponse(BaseModel):
     success: bool
     message: str
     user: Optional[dict] = None
+
+
+class WithdrawRequest(BaseModel):
+    """Request body for withdrawing a student."""
+    class_of_withdrawl: str

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, LogOut, Download, ArrowLeft, LayoutGrid, Table as TableIcon, Edit2, Trash2, X, AlertTriangle } from 'lucide-react';
+import { Search, LogOut, Download, ArrowLeft, LayoutGrid, Table as TableIcon, Edit2, Trash2, X, AlertTriangle, CheckCircle, UserMinus } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { studentsAPI } from '../services/api';
 import './Students.css';
@@ -25,7 +25,23 @@ export default function Students() {
     const [isUpdating, setIsUpdating] = useState(false);
     const [updateFormData, setUpdateFormData] = useState({});
 
-    // --- Delete state ---
+    // --- Delete Type Modal ---
+    const [isDeleteTypeModalOpen, setIsDeleteTypeModalOpen] = useState(false);
+    const [pendingDeleteStudent, setPendingDeleteStudent] = useState(null); // pre-set when clicking inline delete btn
+
+    // --- WITHDRAW state ---
+    const [isWithdrawRegPromptOpen, setIsWithdrawRegPromptOpen] = useState(false);
+    const [withdrawRegNoValue, setWithdrawRegNoValue] = useState('');
+    const [isLookingUpWithdraw, setIsLookingUpWithdraw] = useState(false);
+    const [withdrawNotFoundMsg, setWithdrawNotFoundMsg] = useState('');
+    const [studentToWithdraw, setStudentToWithdraw] = useState(null);
+    const [isWithdrawDetailsOpen, setIsWithdrawDetailsOpen] = useState(false);
+    const [useCurrentClass, setUseCurrentClass] = useState(true);
+    const [manualWithdrawClass, setManualWithdrawClass] = useState('');
+    const [isWithdrawing, setIsWithdrawing] = useState(false);
+    const [withdrawSuccessOpen, setWithdrawSuccessOpen] = useState(false);
+
+    // --- PERMANENT DELETE state ---
     const [isDeletePromptOpen, setIsDeletePromptOpen] = useState(false);
     const [deleteRegNoValue, setDeleteRegNoValue] = useState('');
     const [isLookingUpDelete, setIsLookingUpDelete] = useState(false);
@@ -33,10 +49,11 @@ export default function Students() {
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [studentToDelete, setStudentToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteSuccessOpen, setDeleteSuccessOpen] = useState(false);
 
     const [selectedClass, setSelectedClass] = useState('All Classes');
     const [selectedSection, setSelectedSection] = useState('All Sections');
-    const [viewMode, setViewMode] = useState('card'); // 'card' or 'table'
+    const [viewMode, setViewMode] = useState('card');
 
     const CLASSES = ['All Classes', 'PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
@@ -94,14 +111,12 @@ export default function Students() {
     const handlePromptUpdate = async (e) => {
         if (e) e.preventDefault();
         if (!regNoInputValue || !regNoInputValue.trim()) return;
-
         const query = regNoInputValue.trim();
         setIsLookingUpUpdate(true);
         setUpdateNotFoundMsg('');
         try {
             const results = await studentsAPI.search(query);
             const match = results.find(s => String(s.reg_no) === query);
-
             if (match) {
                 setIsRegPromptOpen(false);
                 setUpdateNotFoundMsg('');
@@ -110,7 +125,6 @@ export default function Students() {
                 setUpdateNotFoundMsg(`No student found with Registration Number "${query}".`);
             }
         } catch (error) {
-            console.error('Search error:', error);
             setUpdateNotFoundMsg('An error occurred while searching. Please try again.');
         } finally {
             setIsLookingUpUpdate(false);
@@ -152,7 +166,6 @@ export default function Students() {
             setSelectedStudentForUpdate(null);
             fetchAllStudents();
         } catch (error) {
-            console.error('Update error:', error);
             alert('Error updating student: ' + error.message);
         } finally {
             setIsUpdating(false);
@@ -164,18 +177,110 @@ export default function Students() {
         setUpdateFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // ---- DELETE ----
+    // ---- DELETE TYPE MODAL ----
+    // Opens from toolbar button (no pre-set student)
+    const openDeleteTypeModal = () => {
+        setPendingDeleteStudent(null);
+        setIsDeleteTypeModalOpen(true);
+    };
+
+    // Opens from inline card/table button (student already known)
+    const openDeleteTypeModalForStudent = (student) => {
+        setPendingDeleteStudent(student);
+        setIsDeleteTypeModalOpen(true);
+    };
+
+    const handleChooseWithdraw = () => {
+        setIsDeleteTypeModalOpen(false);
+        if (pendingDeleteStudent) {
+            // Skip reg_no prompt – we already have the student
+            setStudentToWithdraw(pendingDeleteStudent);
+            setUseCurrentClass(true);
+            setManualWithdrawClass('');
+            setWithdrawNotFoundMsg('');
+            setIsWithdrawDetailsOpen(true);
+        } else {
+            setWithdrawRegNoValue('');
+            setWithdrawNotFoundMsg('');
+            setIsWithdrawRegPromptOpen(true);
+        }
+    };
+
+    const handleChooseDeletePermanently = () => {
+        setIsDeleteTypeModalOpen(false);
+        if (pendingDeleteStudent) {
+            setStudentToDelete(pendingDeleteStudent);
+            setIsDeleteConfirmOpen(true);
+        } else {
+            setDeleteRegNoValue('');
+            setDeleteNotFoundMsg('');
+            setIsDeletePromptOpen(true);
+        }
+    };
+
+    // ---- WITHDRAW ----
+    const handleWithdrawRegLookup = async (e) => {
+        if (e) e.preventDefault();
+        if (!withdrawRegNoValue || !withdrawRegNoValue.trim()) return;
+        const query = withdrawRegNoValue.trim();
+        setIsLookingUpWithdraw(true);
+        setWithdrawNotFoundMsg('');
+        try {
+            const results = await studentsAPI.search(query);
+            const match = results.find(s => String(s.reg_no) === query);
+            if (match) {
+                setStudentToWithdraw(match);
+                setUseCurrentClass(true);
+                setManualWithdrawClass('');
+                setIsWithdrawRegPromptOpen(false);
+                setIsWithdrawDetailsOpen(true);
+            } else {
+                setWithdrawNotFoundMsg(`No student found with Registration Number "${query}".`);
+            }
+        } catch (error) {
+            setWithdrawNotFoundMsg('An error occurred while searching. Please try again.');
+        } finally {
+            setIsLookingUpWithdraw(false);
+        }
+    };
+
+    const handleConfirmWithdraw = async () => {
+        if (!studentToWithdraw) return;
+        const classOfWithdrawl = useCurrentClass
+            ? (studentToWithdraw.class_enrolled || '')
+            : manualWithdrawClass.trim();
+
+        if (!classOfWithdrawl) {
+            alert('Please enter or select a Class of Withdrawal.');
+            return;
+        }
+
+        setIsWithdrawing(true);
+        try {
+            await studentsAPI.withdraw(studentToWithdraw.reg_no, classOfWithdrawl);
+            setIsWithdrawDetailsOpen(false);
+            setStudentToWithdraw(null);
+            setManualWithdrawClass('');
+            setUseCurrentClass(true);
+            setWithdrawSuccessOpen(true);
+            fetchAllStudents();
+        } catch (error) {
+            alert('Error withdrawing student: ' + error.message);
+        } finally {
+            setIsWithdrawing(false);
+        }
+    };
+
+    // ---- PERMANENT DELETE ----
     const handlePromptDelete = async (e) => {
         if (e) e.preventDefault();
         if (!deleteRegNoValue || !deleteRegNoValue.trim()) return;
-
         const query = deleteRegNoValue.trim();
         setIsLookingUpDelete(true);
         setDeleteNotFoundMsg('');
         try {
             const results = await studentsAPI.search(query);
             const match = results.find(s => String(s.reg_no) === query);
-
             if (match) {
                 setIsDeletePromptOpen(false);
                 setDeleteNotFoundMsg('');
@@ -185,7 +290,6 @@ export default function Students() {
                 setDeleteNotFoundMsg(`No student found with Registration Number "${query}".`);
             }
         } catch (error) {
-            console.error('Search error:', error);
             setDeleteNotFoundMsg('An error occurred while searching. Please try again.');
         } finally {
             setIsLookingUpDelete(false);
@@ -199,9 +303,9 @@ export default function Students() {
             await studentsAPI.delete(studentToDelete.reg_no);
             setIsDeleteConfirmOpen(false);
             setStudentToDelete(null);
+            setDeleteSuccessOpen(true);
             fetchAllStudents();
         } catch (error) {
-            console.error('Delete error:', error);
             alert('Error deleting student: ' + error.message);
         } finally {
             setIsDeleting(false);
@@ -272,7 +376,6 @@ export default function Students() {
             }
             XLSX.writeFile(wb, `${filename}.xlsx`);
         } catch (error) {
-            console.error('Error exporting XLSX:', error);
             alert('Error exporting XLSX: ' + error.message);
         } finally {
             setIsExporting(false);
@@ -366,12 +469,11 @@ export default function Students() {
                                 <span>{isLookingUpUpdate ? 'Looking up...' : 'Update Record'}</span>
                             </button>
                             <button
-                                onClick={() => { setDeleteRegNoValue(''); setDeleteNotFoundMsg(''); setIsDeletePromptOpen(true); }}
+                                onClick={openDeleteTypeModal}
                                 className="action-record-btn delete-record-btn"
-                                disabled={isLookingUpDelete}
                             >
                                 <Trash2 size={18} />
-                                <span>{isLookingUpDelete ? 'Looking up...' : 'Delete Record'}</span>
+                                <span>Delete Record</span>
                             </button>
                         </div>
                     </div>
@@ -465,7 +567,7 @@ export default function Students() {
                                             <button onClick={() => handleOpenUpdateModal(student)} className="card-action-btn card-update-btn">
                                                 <Edit2 size={15} /> Update
                                             </button>
-                                            <button onClick={() => { setStudentToDelete(student); setIsDeleteConfirmOpen(true); }} className="card-action-btn card-delete-btn">
+                                            <button onClick={() => openDeleteTypeModalForStudent(student)} className="card-action-btn card-delete-btn">
                                                 <Trash2 size={15} /> Delete
                                             </button>
                                         </div>
@@ -522,7 +624,7 @@ export default function Students() {
                                                         <button onClick={() => handleOpenUpdateModal(student)} className="table-action-btn table-update-btn">
                                                             <Edit2 size={13} /> Update
                                                         </button>
-                                                        <button onClick={() => { setStudentToDelete(student); setIsDeleteConfirmOpen(true); }} className="table-action-btn table-delete-btn">
+                                                        <button onClick={() => openDeleteTypeModalForStudent(student)} className="table-action-btn table-delete-btn">
                                                             <Trash2 size={13} /> Delete
                                                         </button>
                                                     </div>
@@ -572,14 +674,12 @@ export default function Students() {
                                     autoFocus
                                 />
                             </div>
-
                             {updateNotFoundMsg && (
                                 <div className="not-found-alert">
                                     <AlertTriangle size={18} />
                                     <span>{updateNotFoundMsg}</span>
                                 </div>
                             )}
-
                             <div className="modal-footer-btns">
                                 <button type="button" className="modal-cancel-btn" onClick={() => { setIsRegPromptOpen(false); setUpdateNotFoundMsg(''); }}>Cancel</button>
                                 <button type="submit" className="modal-submit-btn modal-blue-btn" disabled={isLookingUpUpdate}>
@@ -637,12 +737,189 @@ export default function Students() {
                 </div>
             )}
 
+            {/* ===== DELETE TYPE MODAL ===== */}
+            {isDeleteTypeModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content delete-type-modal">
+                        <div className="modal-header">
+                            <h3>Remove Student Record</h3>
+                            <button className="modal-close-btn" onClick={() => setIsDeleteTypeModalOpen(false)}>
+                                <X size={22} />
+                            </button>
+                        </div>
+                        <p className="delete-type-subtitle">How would you like to remove this student?</p>
+                        <div className="delete-type-options">
+                            <button className="delete-type-btn withdraw-type-btn" onClick={handleChooseWithdraw}>
+                                <div className="delete-type-icon">
+                                    <UserMinus size={32} />
+                                </div>
+                                <div className="delete-type-text">
+                                    <span className="delete-type-title">Withdraw Student</span>
+                                    <span className="delete-type-desc">Archive the student record in the withdrawn students list. The record is preserved for future reference.</span>
+                                </div>
+                            </button>
+                            <button className="delete-type-btn permanent-type-btn" onClick={handleChooseDeletePermanently}>
+                                <div className="delete-type-icon">
+                                    <Trash2 size={32} />
+                                </div>
+                                <div className="delete-type-text">
+                                    <span className="delete-type-title">Delete Permanently</span>
+                                    <span className="delete-type-desc">Permanently remove the record from the database. This action cannot be undone.</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== WITHDRAW Reg-No Prompt Modal ===== */}
+            {isWithdrawRegPromptOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content prompt-modal">
+                        <div className="modal-header">
+                            <h3>Withdraw Student</h3>
+                            <button className="modal-close-btn" onClick={() => { setIsWithdrawRegPromptOpen(false); setWithdrawNotFoundMsg(''); }}>
+                                <X size={22} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleWithdrawRegLookup}>
+                            <div className="form-group modal-form-group">
+                                <label>Registration Number</label>
+                                <input
+                                    type="text"
+                                    value={withdrawRegNoValue}
+                                    onChange={(e) => { setWithdrawRegNoValue(e.target.value); setWithdrawNotFoundMsg(''); }}
+                                    required
+                                    placeholder="Enter Reg No..."
+                                    className="modal-text-input"
+                                    autoFocus
+                                />
+                            </div>
+                            {withdrawNotFoundMsg && (
+                                <div className="not-found-alert">
+                                    <AlertTriangle size={18} />
+                                    <span>{withdrawNotFoundMsg}</span>
+                                </div>
+                            )}
+                            <div className="modal-footer-btns">
+                                <button type="button" className="modal-cancel-btn" onClick={() => { setIsWithdrawRegPromptOpen(false); setWithdrawNotFoundMsg(''); }}>Cancel</button>
+                                <button type="submit" className="modal-submit-btn modal-amber-btn" disabled={isLookingUpWithdraw}>
+                                    {isLookingUpWithdraw ? 'Searching...' : 'Find Student'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== WITHDRAW Details Modal ===== */}
+            {isWithdrawDetailsOpen && studentToWithdraw && (
+                <div className="modal-overlay">
+                    <div className="modal-content withdraw-details-modal">
+                        <div className="modal-header">
+                            <h3>Withdraw Student</h3>
+                            <button className="modal-close-btn" onClick={() => { setIsWithdrawDetailsOpen(false); setStudentToWithdraw(null); }}>
+                                <X size={22} />
+                            </button>
+                        </div>
+
+                        <div className="withdraw-warning-banner">
+                            <UserMinus size={20} />
+                            <span>This student will be moved to the Withdrawn Students archive.</span>
+                        </div>
+
+                        {/* Student preview */}
+                        <div className="delete-student-preview">
+                            <div className="delete-preview-header">
+                                <span className="delete-preview-name">{studentToWithdraw.student_name}</span>
+                                <span className="reg-badge">{studentToWithdraw.reg_no}</span>
+                            </div>
+                            <div className="delete-preview-details">
+                                <span><strong>Class:</strong> {studentToWithdraw.class_enrolled || 'N/A'}</span>
+                                <span><strong>Section:</strong> {studentToWithdraw.section || 'N/A'}</span>
+                                <span><strong>Gender:</strong> {studentToWithdraw.gender || 'N/A'}</span>
+                                <span><strong>Father/Guardian:</strong> {studentToWithdraw.f_g_name || 'N/A'}</span>
+                                <span><strong>Contact:</strong> {studentToWithdraw.f_g_contact || 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        {/* Class of withdrawal */}
+                        <div className="withdraw-class-section">
+                            <label className="withdraw-checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={useCurrentClass}
+                                    onChange={(e) => {
+                                        setUseCurrentClass(e.target.checked);
+                                        if (e.target.checked) setManualWithdrawClass('');
+                                    }}
+                                    className="withdraw-checkbox"
+                                />
+                                <span>Set current class (<strong>{studentToWithdraw.class_enrolled || 'N/A'}</strong>) as Class of Withdrawal</span>
+                            </label>
+
+                            {!useCurrentClass && (
+                                <div className="form-group modal-form-group" style={{ marginTop: '0.75rem' }}>
+                                    <label>Class of Withdrawal</label>
+                                    <input
+                                        type="text"
+                                        value={manualWithdrawClass}
+                                        onChange={(e) => setManualWithdrawClass(e.target.value)}
+                                        placeholder="Enter class of withdrawal..."
+                                        className="modal-text-input"
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="modal-footer-btns">
+                            <button className="modal-cancel-btn" onClick={() => { setIsWithdrawDetailsOpen(false); setStudentToWithdraw(null); }} disabled={isWithdrawing}>
+                                Cancel
+                            </button>
+                            <button className="modal-submit-btn modal-amber-btn" onClick={handleConfirmWithdraw} disabled={isWithdrawing}>
+                                {isWithdrawing ? 'Withdrawing...' : 'Confirm Withdrawal'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== WITHDRAW Success Modal ===== */}
+            {withdrawSuccessOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content success-modal-centered">
+                        <div className="success-icon-wrap amber-icon">
+                            <UserMinus size={52} />
+                        </div>
+                        <h2 className="success-modal-title">Student Withdrawn</h2>
+                        <p className="success-modal-desc">The student has been successfully moved to the Withdrawn Students archive.</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            <button
+                                onClick={() => { setWithdrawSuccessOpen(false); navigate('/withdrawn'); }}
+                                className="modal-submit-btn modal-amber-btn"
+                                style={{ width: '100%' }}
+                            >
+                                View Withdrawn Students
+                            </button>
+                            <button
+                                onClick={() => setWithdrawSuccessOpen(false)}
+                                className="modal-cancel-btn"
+                                style={{ width: '100%' }}
+                            >
+                                Back to Students
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ===== DELETE Reg-No Prompt Modal ===== */}
             {isDeletePromptOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content prompt-modal">
                         <div className="modal-header">
-                            <h3>Delete Student Record</h3>
+                            <h3>Delete Permanently</h3>
                             <button className="modal-close-btn" onClick={() => { setIsDeletePromptOpen(false); setDeleteNotFoundMsg(''); }}>
                                 <X size={22} />
                             </button>
@@ -660,14 +937,12 @@ export default function Students() {
                                     autoFocus
                                 />
                             </div>
-
                             {deleteNotFoundMsg && (
                                 <div className="not-found-alert">
                                     <AlertTriangle size={18} />
                                     <span>{deleteNotFoundMsg}</span>
                                 </div>
                             )}
-
                             <div className="modal-footer-btns">
                                 <button type="button" className="modal-cancel-btn" onClick={() => { setIsDeletePromptOpen(false); setDeleteNotFoundMsg(''); }}>Cancel</button>
                                 <button type="submit" className="modal-submit-btn modal-red-btn" disabled={isLookingUpDelete}>
@@ -684,7 +959,7 @@ export default function Students() {
                 <div className="modal-overlay">
                     <div className="modal-content delete-confirm-modal">
                         <div className="modal-header">
-                            <h3>Confirm Deletion</h3>
+                            <h3>Confirm Permanent Deletion</h3>
                             <button className="modal-close-btn" onClick={() => { setIsDeleteConfirmOpen(false); setStudentToDelete(null); }}>
                                 <X size={22} />
                             </button>
@@ -692,7 +967,7 @@ export default function Students() {
 
                         <div className="delete-warning-banner">
                             <AlertTriangle size={20} />
-                            <span>This action is permanent and cannot be undone.</span>
+                            <span>This action is permanent and cannot be undone. The record will be removed from all places.</span>
                         </div>
 
                         {/* Student preview card */}
@@ -710,7 +985,7 @@ export default function Students() {
                             </div>
                         </div>
 
-                        <p className="delete-confirm-question">Are you sure you want to delete this student record?</p>
+                        <p className="delete-confirm-question">Are you sure you want to permanently delete this student record?</p>
 
                         <div className="modal-footer-btns">
                             <button
@@ -725,9 +1000,29 @@ export default function Students() {
                                 onClick={handleConfirmDelete}
                                 disabled={isDeleting}
                             >
-                                {isDeleting ? 'Deleting...' : 'Yes, Delete Student'}
+                                {isDeleting ? 'Deleting...' : 'Yes, Delete Permanently'}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== DELETE Success Modal ===== */}
+            {deleteSuccessOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content success-modal-centered">
+                        <div className="success-icon-wrap red-icon">
+                            <CheckCircle size={52} />
+                        </div>
+                        <h2 className="success-modal-title">Record Deleted</h2>
+                        <p className="success-modal-desc">The student record has been permanently removed from the database.</p>
+                        <button
+                            onClick={() => setDeleteSuccessOpen(false)}
+                            className="modal-submit-btn modal-red-btn"
+                            style={{ width: '100%' }}
+                        >
+                            OK
+                        </button>
                     </div>
                 </div>
             )}

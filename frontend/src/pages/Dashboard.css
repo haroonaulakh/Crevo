@@ -810,12 +810,17 @@
 }
 
 .hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   padding: 1rem 2rem;
   font-size: 1.1rem;
   font-family: var(--font-display);
   font-weight: 700;
   border-radius: 0.75rem;
   letter-spacing: -0.01em;
+  border: none;
+  cursor: pointer;
 }
 
 .back-btn:hover {
@@ -926,4 +931,20 @@
   top: 50%;
   left: 10%;
   animation-delay: 3s;
+}
+
+/* ===== Withdrawn stat icon ===== */
+.stat-icon-withdrawn {
+  background: linear-gradient(135deg, #fffbeb, #fde68a);
+}
+
+/* ===== Withdrawn Students hero button ===== */
+.withdrawn-btn {
+  background: linear-gradient(135deg, #ed8936, #dd6b20);
+  color: #ffffff;
+}
+
+.withdrawn-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(237, 137, 54, 0.35);
 }

@@ -140,6 +140,63 @@ export const studentsAPI = {
 
     return response.json();
   },
+
+  // Withdraw a student (move to withdrawn table with class_of_withdrawl)
+  withdraw: async (reg_no, class_of_withdrawl) => {
+    const response = await fetch(`${API_BASE_URL}/api/v1/students/${reg_no}/withdraw`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ class_of_withdrawl }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Failed to withdraw student');
+    }
+
+    return response.json();
+  },
+};
+
+// Withdrawn Students API
+export const withdrawnAPI = {
+  getAll: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/withdrawn/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Failed to fetch withdrawn students' }));
+        throw new Error(error.detail || 'Failed to fetch withdrawn students');
+      }
+
+      return response.json();
+    } catch (error) {
+      throw new Error(error.message || 'Failed to fetch withdrawn students');
+    }
+  },
+
+  delete: async (reg_no) => {
+    const response = await fetch(`${API_BASE_URL}/api/v1/withdrawn/${reg_no}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Failed to delete withdrawn student');
+    }
+
+    return response.json();
+  },
 };
 
 

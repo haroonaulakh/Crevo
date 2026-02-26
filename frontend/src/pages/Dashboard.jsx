@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, LogOut, User, Plus, Download, CheckCircle, X } from 'lucide-react';
-import { studentsAPI } from '../services/api';
+import { LogOut, User, Plus, CheckCircle, X, UserMinus } from 'lucide-react';
+import { studentsAPI, withdrawnAPI } from '../services/api';
 import './Dashboard.css';
 
 export default function Dashboard() {
@@ -9,6 +9,7 @@ export default function Dashboard() {
 
   const [allStudents, setAllStudents] = useState([]);
   const [isLoadingStudents, setIsLoadingStudents] = useState(false);
+  const [withdrawnCount, setWithdrawnCount] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -53,6 +54,7 @@ export default function Dashboard() {
   const animatedTotal = useAnimatedCount(allStudents.length);
   const animatedMale = useAnimatedCount(maleCount);
   const animatedFemale = useAnimatedCount(femaleCount);
+  const animatedWithdrawn = useAnimatedCount(withdrawnCount);
 
   const DEFAULT_SECTIONS = {
     'PG': ['Snr', 'Jnr'],
@@ -102,7 +104,17 @@ export default function Dashboard() {
 
     setUserEmail(email || '');
     fetchAllStudents();
+    fetchWithdrawnCount();
   }, [navigate]);
+
+  const fetchWithdrawnCount = async () => {
+    try {
+      const data = await withdrawnAPI.getAll();
+      setWithdrawnCount(Array.isArray(data) ? data.length : 0);
+    } catch (error) {
+      console.error('Error fetching withdrawn count:', error);
+    }
+  };
 
   const fetchAllStudents = async () => {
     setIsLoadingStudents(true);
@@ -288,6 +300,15 @@ export default function Dashboard() {
                     <span className="stat-value">{animatedFemale}</span>
                   </div>
                 </div>
+                <div className="stat-card" style={{ animationDelay: '0.55s' }}>
+                  <div className="stat-icon stat-icon-withdrawn">
+                    <UserMinus width="28" height="28" stroke="#c05621" strokeWidth="2" />
+                  </div>
+                  <div className="stat-info">
+                    <span className="stat-label">Withdrawn</span>
+                    <span className="stat-value">{animatedWithdrawn}</span>
+                  </div>
+                </div>
               </div>
 
               <div className="hero-actions">
@@ -298,6 +319,10 @@ export default function Dashboard() {
                 <button onClick={() => setShowAddForm(true)} className="add-student-btn hero-btn">
                   <Plus size={22} />
                   Add New Student
+                </button>
+                <button onClick={() => navigate('/withdrawn')} className="withdrawn-btn hero-btn">
+                  <UserMinus size={22} />
+                  Withdrawn Students
                 </button>
               </div>
             </div>

@@ -1,0 +1,163 @@
+/* ===== Withdrawn Students – reuses Students.css patterns with amber overrides ===== */
+@import './Students.css';
+
+/* ===== Animated background – amber/warm tones ===== */
+@keyframes withdrawnGradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.withdrawn-container {
+    min-height: 100vh;
+    padding: 2rem;
+    background: linear-gradient(-45deg, #fffbeb, #ffffff, #fef3c7, #fff7ed);
+    background-size: 400% 400%;
+    animation: withdrawnGradientBG 15s ease infinite;
+    box-sizing: border-box;
+}
+
+/* ===== Header ===== */
+.withdrawn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(237, 137, 54, 0.12);
+    margin-bottom: 1.5rem;
+    border-top: 3px solid #ed8936;
+}
+
+.withdrawn-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.withdrawn-header-icon {
+    color: #dd6b20;
+}
+
+.withdrawn-subtitle {
+    font-size: 0.82rem;
+    color: #92400e;
+    margin: 0.2rem 0 0 0;
+    font-weight: 500;
+}
+
+/* ===== Content ===== */
+.withdrawn-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== Search section amber accent ===== */
+.withdrawn-search-section {
+    border-top: 2px solid #fbd38d !important;
+}
+
+/* ===== Class filter pills – amber active state ===== */
+.withdrawn-container .class-filter-btn.active {
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    border-color: transparent;
+    box-shadow: 0 3px 8px rgba(237, 137, 54, 0.35);
+}
+
+/* ===== Withdrawal class badge on cards ===== */
+.withdrawl-class-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1.5px solid #fbd38d;
+    color: #92400e;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+/* ===== Withdrawal class in table ===== */
+.withdrawal-class-cell {
+    display: inline-block;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1px solid #fbd38d;
+    color: #92400e;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ===== Withdrawn card accent ===== */
+.withdrawn-card {
+    border-top: 3px solid #ed8936 !important;
+}
+
+.withdrawn-card:hover {
+    border-color: #ed8936 !important;
+    box-shadow: 0 15px 30px rgba(237, 137, 54, 0.15) !important;
+}
+
+/* ===== Withdrawn table hover ===== */
+.withdrawn-container .students-table tr:hover {
+    background-color: #fffbeb !important;
+}
+
+/* ===== Empty state ===== */
+.withdrawn-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 4rem 1rem;
+}
+
+.withdrawn-empty .empty-icon {
+    color: #fbd38d;
+    opacity: 0.8;
+}
+
+.withdrawn-empty p {
+    color: #92400e;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .withdrawn-container {
+        padding: 1rem;
+    }
+
+    .withdrawn-header {
+        padding: 1rem 1.1rem;
+    }
+
+    .withdrawn-subtitle {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .withdrawn-container {
+        padding: 0.75rem;
+    }
+}

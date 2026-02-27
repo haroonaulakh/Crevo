@@ -489,8 +489,11 @@ export default function WithdrawnStudents() {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>B-Form</label>
-                                    <input type="text" name="b_form" value={addForm.b_form} onChange={handleAddFormChange} placeholder="B-Form number" />
+                                    <div className="label-row">
+                                        <label>B-Form</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.b_form === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, b_form: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="b_form" value={addForm.b_form} onChange={handleAddFormChange} placeholder="B-Form number" disabled={addForm.b_form === 'N/A'} />
                                 </div>
                                 <div className="form-group">
                                     <label>Date of Birth</label>
@@ -503,20 +506,46 @@ export default function WithdrawnStudents() {
 
                                 {/* Row 2 */}
                                 <div className="form-group">
-                                    <label>Father/Guardian Name</label>
-                                    <input type="text" name="f_g_name" value={addForm.f_g_name} onChange={handleAddFormChange} placeholder="Guardian name" />
+                                    <div className="label-row">
+                                        <label>Blood Group</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.blood_group === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, blood_group: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <select name="blood_group" value={addForm.blood_group} onChange={handleAddFormChange} disabled={addForm.blood_group === 'N/A'}>
+                                        <option value="">Select</option>
+                                        <option value="A+">A+</option><option value="A-">A-</option>
+                                        <option value="B+">B+</option><option value="B-">B-</option>
+                                        <option value="O+">O+</option><option value="O-">O-</option>
+                                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                        <option value="N/A">N/A</option>
+                                    </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>Guardian CNIC</label>
-                                    <input type="text" name="f_g_cnic" value={addForm.f_g_cnic} onChange={handleAddFormChange} placeholder="CNIC number" />
+                                    <div className="label-row">
+                                        <label>Father/Guardian Name</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.f_g_name === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, f_g_name: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="f_g_name" value={addForm.f_g_name} onChange={handleAddFormChange} placeholder="Guardian name" disabled={addForm.f_g_name === 'N/A'} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Guardian Contact</label>
-                                    <input type="text" name="f_g_contact" value={addForm.f_g_contact} onChange={handleAddFormChange} placeholder="Phone number" />
+                                    <div className="label-row">
+                                        <label>Guardian CNIC</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.f_g_cnic === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, f_g_cnic: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="f_g_cnic" value={addForm.f_g_cnic} onChange={handleAddFormChange} placeholder="CNIC number" disabled={addForm.f_g_cnic === 'N/A'} />
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Guardian Contact</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.f_g_contact === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, f_g_contact: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="f_g_contact" value={addForm.f_g_contact} onChange={handleAddFormChange} placeholder="Phone number" disabled={addForm.f_g_contact === 'N/A'} />
                                 </div>
                                 <div className="form-group form-group-wide">
-                                    <label>Address</label>
-                                    <input type="text" name="address" value={addForm.address} onChange={handleAddFormChange} placeholder="Full address" />
+                                    <div className="label-row">
+                                        <label>Address</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.address === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, address: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="address" value={addForm.address} onChange={handleAddFormChange} placeholder="Full address" disabled={addForm.address === 'N/A'} />
                                 </div>
 
                                 {/* Row 3 */}
@@ -535,23 +564,36 @@ export default function WithdrawnStudents() {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>Section</label>
-                                    <input type="text" name="section" value={addForm.section} onChange={handleAddFormChange} placeholder="e.g. A" />
+                                    <div className="label-row">
+                                        <label>Section</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.section === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, section: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="section" value={addForm.section} onChange={handleAddFormChange} placeholder="e.g. A" disabled={addForm.section === 'N/A'} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Group</label>
-                                    <input type="text" name="group" value={addForm.group} onChange={handleAddFormChange} placeholder="e.g. Science" />
+                                    <div className="label-row">
+                                        <label>Group</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.group === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, group: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="group" value={addForm.group} onChange={handleAddFormChange} placeholder="e.g. Science" disabled={addForm.group === 'N/A'} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Class of Admission</label>
-                                    <select name="class_of_admission" value={addForm.class_of_admission} onChange={handleAddFormChange}>
+                                    <div className="label-row">
+                                        <label>Class of Admission</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.class_of_admission === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, class_of_admission: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <select name="class_of_admission" value={addForm.class_of_admission} onChange={handleAddFormChange} disabled={addForm.class_of_admission === 'N/A'}>
                                         <option value="">Select</option>
                                         {CLASS_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                                        <option value="N/A">N/A</option>
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>Caste</label>
-                                    <input type="text" name="caste" value={addForm.caste} onChange={handleAddFormChange} placeholder="Caste" />
+                                    <div className="label-row">
+                                        <label>Caste</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={addForm.caste === 'N/A'} onChange={(e) => setAddForm(prev => ({ ...prev, caste: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="caste" value={addForm.caste} onChange={handleAddFormChange} placeholder="Caste" disabled={addForm.caste === 'N/A'} />
                                 </div>
                                 <div className="form-group">
                                     <label>Monthly Fee</label>

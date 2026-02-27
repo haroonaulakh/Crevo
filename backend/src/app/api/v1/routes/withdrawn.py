@@ -28,6 +28,7 @@ class WithdrawnStudentCreate(BaseModel):
     monthly_fee: Optional[int] = None
     no_fee: Optional[str] = None
     class_of_withdrawl: Optional[str] = None
+    blood_group: Optional[str] = None
 
 
 def format_withdrawn_response(student: Dict[str, Any]) -> Dict[str, Any]:
@@ -57,6 +58,7 @@ def format_withdrawn_response(student: Dict[str, Any]) -> Dict[str, Any]:
         "monthly_fee": student.get("monthly_fee"),
         "no_fee": student.get("no_fee"),
         "class_of_withdrawl": student.get("class_of_withdrawl"),
+        "blood_group": student.get("blood_group"),
     }
 
 

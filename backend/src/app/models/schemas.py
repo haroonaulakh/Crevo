@@ -26,6 +26,7 @@ class StudentCreate(BaseModel):
     caste : str
     monthly_fee: int  # Monthly fee (integer)
     no_fee : str
+    blood_group: Optional[str] = None
   
     
 
@@ -56,6 +57,7 @@ class StudentResponse(BaseModel):
     caste : str
     monthly_fee: int  # Monthly fee (integer)
     no_fee : str
+    blood_group: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -80,6 +82,7 @@ class StudentUpdate(BaseModel):
     caste: Optional[str] = None
     monthly_fee: Optional[int] = None
     no_fee: Optional[str] = None
+    blood_group: Optional[str] = None
 
     class Config:
         populate_by_name = True

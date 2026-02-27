@@ -27,6 +27,7 @@ const EMPTY_FORM = {
     monthly_fee: '',
     no_fee: '',
     class_of_withdrawl: '',
+    blood_group: '',
 };
 
 export default function WithdrawnStudents() {

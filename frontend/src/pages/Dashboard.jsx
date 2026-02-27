@@ -78,6 +78,7 @@ export default function Dashboard() {
     gender: '',
     b_form: '',
     dob: '',
+    blood_group: '',
     admission_date: '',
     f_g_name: '',
     f_g_cnic: '',
@@ -164,6 +165,7 @@ export default function Dashboard() {
         gender: newStudent.gender,
         b_form: newStudent.b_form,
         dob: newStudent.dob || null,
+        blood_group: newStudent.blood_group || null,
         admission_date: newStudent.admission_date || null,
         f_g_name: newStudent.f_g_name,
         f_g_cnic: newStudent.f_g_cnic,
@@ -197,6 +199,7 @@ export default function Dashboard() {
         gender: '',
         b_form: '',
         dob: '',
+        blood_group: '',
         admission_date: '',
         f_g_name: '',
         f_g_cnic: '',
@@ -343,188 +346,139 @@ export default function Dashboard() {
               <div className="form-grid">
                 <div className="form-group">
                   <label>Registration Number *</label>
-                  <input
-                    type="text"
-                    name="reg_no"
-                    value={newStudent.reg_no}
-                    onChange={handleInputChange}
-                    className="form-input"
-                    required
-                  />
+                  <input type="number" name="reg_no" value={newStudent.reg_no} onChange={handleInputChange} className="form-input" required />
                 </div>
                 <div className="form-group">
                   <label>Student Name *</label>
-                  <input
-                    type="text"
-                    name="student_name"
-                    value={newStudent.student_name}
-                    onChange={handleInputChange}
-                    className="form-input"
-                    required
-                  />
+                  <input type="text" name="student_name" value={newStudent.student_name} onChange={handleInputChange} className="form-input" required />
                 </div>
                 <div className="form-group">
-                  <label>Gender *</label>
-                  <select
-                    name="gender"
-                    value={newStudent.gender}
-                    onChange={handleInputChange}
-                    className="form-input"
-                    required
-                  >
+                  <div className="label-row">
+                    <label>Gender *</label>
+                  </div>
+                  <select name="gender" value={newStudent.gender} onChange={handleInputChange} className="form-input" required>
                     <option value="">Select Gender</option>
-                    <option value="M">M</option>
-                    <option value="F">F</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>B-Form</label>
-                  <input
-                    type="text"
-                    name="b_form"
-                    value={newStudent.b_form}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>B-Form</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.b_form === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, b_form: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="b_form" value={newStudent.b_form} onChange={handleInputChange} className="form-input" disabled={newStudent.b_form === 'N/A'} />
                 </div>
                 <div className="form-group">
                   <label>Date of Birth</label>
-                  <input
-                    type="date"
-                    name="dob"
-                    value={newStudent.dob}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <input type="date" name="dob" value={newStudent.dob} onChange={handleInputChange} className="form-input" />
                 </div>
                 <div className="form-group">
                   <label>Admission Date</label>
-                  <input
-                    type="date"
-                    name="admission_date"
-                    value={newStudent.admission_date}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <input type="date" name="admission_date" value={newStudent.admission_date} onChange={handleInputChange} className="form-input" />
+                </div>
+                
+                <div className="form-group">
+                  <div className="label-row">
+                    <label>Blood Group</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.blood_group === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, blood_group: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <select name="blood_group" value={newStudent.blood_group} onChange={handleInputChange} className="form-input" disabled={newStudent.blood_group === 'N/A'}>
+                    <option value="">Select</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="N/A">N/A</option>
+                  </select>
                 </div>
                 <div className="form-group">
-                  <label>Father/Guardian's Name</label>
-                  <input
-                    type="text"
-                    name="f_g_name"
-                    value={newStudent.f_g_name}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>Father/Guardian's Name</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.f_g_name === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, f_g_name: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="f_g_name" value={newStudent.f_g_name} onChange={handleInputChange} className="form-input" disabled={newStudent.f_g_name === 'N/A'} />
                 </div>
                 <div className="form-group">
-                  <label>Father/Guardian's CNIC</label>
-                  <input
-                    type="text"
-                    name="f_g_cnic"
-                    value={newStudent.f_g_cnic}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>Father/Guardian's CNIC</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.f_g_cnic === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, f_g_cnic: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="f_g_cnic" value={newStudent.f_g_cnic} onChange={handleInputChange} className="form-input" disabled={newStudent.f_g_cnic === 'N/A'} />
                 </div>
                 <div className="form-group">
-                  <label>Father/Guardian's Contact</label>
-                  <input
-                    type="text"
-                    name="f_g_contact"
-                    value={newStudent.f_g_contact}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>Father/Guardian's Contact</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.f_g_contact === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, f_g_contact: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="f_g_contact" value={newStudent.f_g_contact} onChange={handleInputChange} className="form-input" disabled={newStudent.f_g_contact === 'N/A'} />
+                </div>
+                <div className="form-group form-group-wide">
+                  <div className="label-row">
+                    <label>Address</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.address === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, address: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="address" value={newStudent.address} onChange={handleInputChange} className="form-input" disabled={newStudent.address === 'N/A'} />
                 </div>
                 <div className="form-group">
-                  <label>Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={newStudent.address}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <label>Class Enrolled *</label>
+                  <select name="class_enrolled" value={newStudent.class_enrolled} onChange={handleInputChange} className="form-input" required>
+                    <option value="">Select</option>
+                    {['PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
                 </div>
                 <div className="form-group">
-                  <label>Class Enrolled</label>
-                  <input
-                    type="text"
-                    name="class_enrolled"
-                    value={newStudent.class_enrolled}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Section</label>
-                  <input
-                    type="text"
-                    name="section"
-                    value={newStudent.section}
-                    onChange={handleInputChange}
-                    className="form-input"
-                    list="section-suggestions"
-                  />
+                  <div className="label-row">
+                    <label>Section</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.section === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, section: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="section" value={newStudent.section} onChange={handleInputChange} className="form-input" list="section-suggestions" disabled={newStudent.section === 'N/A'} />
                   <datalist id="section-suggestions">
-                    {availableSectionsForAdd.map(sec => (
-                      <option key={sec} value={sec} />
-                    ))}
+                    {availableSectionsForAdd.map(sec => <option key={sec} value={sec} />)}
                   </datalist>
                 </div>
                 <div className="form-group">
-                  <label>Group</label>
-                  <input
-                    type="text"
-                    name="group"
-                    value={newStudent.group}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>Group</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.group === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, group: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="group" value={newStudent.group} onChange={handleInputChange} className="form-input" disabled={newStudent.group === 'N/A'} />
                 </div>
                 <div className="form-group">
-                  <label>Class of Admission</label>
-                  <input
-                    type="text"
-                    name="class_of_admission"
-                    value={newStudent.class_of_admission}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>Class of Admission</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.class_of_admission === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, class_of_admission: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <select name="class_of_admission" value={newStudent.class_of_admission} onChange={handleInputChange} className="form-input" disabled={newStudent.class_of_admission === 'N/A'}>
+                    <option value="">Select</option>
+                    {['PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(c => <option key={c} value={c}>{c}</option>)}
+                    <option value="N/A">N/A</option>
+                  </select>
                 </div>
                 <div className="form-group">
-                  <label>Caste</label>
-                  <input
-                    type="text"
-                    name="caste"
-                    value={newStudent.caste}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <div className="label-row">
+                    <label>Caste</label>
+                    <label className="na-checkbox"><input type="checkbox" checked={newStudent.caste === 'N/A'} onChange={(e) => setNewStudent(prev => ({ ...prev, caste: e.target.checked ? 'N/A' : '' }))} /> N/A</label>
+                  </div>
+                  <input type="text" name="caste" value={newStudent.caste} onChange={handleInputChange} className="form-input" disabled={newStudent.caste === 'N/A'} />
                 </div>
                 <div className="form-group">
                   <label>Monthly Fee</label>
-                  <input
-                    type="number"
-                    name="monthly_fee"
-                    value={newStudent.monthly_fee}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <input type="number" name="monthly_fee" value={newStudent.monthly_fee} onChange={handleInputChange} className="form-input" />
                 </div>
                 <div className="form-group">
-                  <label>No Fee</label>
-                  <input
-                    type="text"
-                    name="no_fee"
-                    value={newStudent.no_fee}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                  <label>No Fee *</label>
+                  <select name="no_fee" value={newStudent.no_fee} onChange={handleInputChange} className="form-input" required>
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
                 </div>
               </div>
-
               <button type="submit" className="submit-btn" disabled={isAdding}>
                 {isAdding ? 'Adding Student...' : 'Add Student'}
               </button>

@@ -35,6 +35,7 @@ def format_student_response(student: Dict[str, Any]) -> Dict[str, Any]:
         "caste": student.get("caste"),
         "monthly_fee": student.get("monthly_fee"),
         "no_fee": student.get("no_fee"),
+        "blood_group": student.get("blood_group"),
     }
 
 

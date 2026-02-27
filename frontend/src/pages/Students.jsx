@@ -150,6 +150,7 @@ export default function Students() {
             caste: student.caste || '',
             monthly_fee: student.monthly_fee != null ? student.monthly_fee : '',
             no_fee: student.no_fee || '',
+            blood_group: student.blood_group || '',
         });
         setIsUpdateModalOpen(true);
     };
@@ -357,6 +358,7 @@ export default function Students() {
                 'Caste': student.caste || 'N/A',
                 'Monthly Fee': student.monthly_fee != null ? student.monthly_fee : 'N/A',
                 'No Fee': student.no_fee || 'N/A',
+                'Blood Group': student.blood_group || 'N/A',
             }));
 
             const ws = XLSX.utils.json_to_sheet(formattedData);
@@ -562,6 +564,7 @@ export default function Students() {
                                             <p><strong>Caste:</strong> {student.caste || 'N/A'}</p>
                                             <p><strong>Monthly Fee:</strong> {student.monthly_fee != null ? student.monthly_fee : 'N/A'}</p>
                                             <p><strong>No Fee:</strong> {student.no_fee || 'N/A'}</p>
+                                            <p><strong>Blood Group:</strong> {student.blood_group || 'N/A'}</p>
                                         </div>
                                         <div className="student-card-actions">
                                             <button onClick={() => handleOpenUpdateModal(student)} className="card-action-btn card-update-btn">
@@ -596,6 +599,7 @@ export default function Students() {
                                             <th>Caste</th>
                                             <th>Monthly Fee</th>
                                             <th>No Fee</th>
+                                            <th>Blood Grp</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -619,6 +623,7 @@ export default function Students() {
                                                 <td>{student.caste || 'N/A'}</td>
                                                 <td>{student.monthly_fee != null ? student.monthly_fee : 'N/A'}</td>
                                                 <td>{student.no_fee || 'N/A'}</td>
+                                                <td>{student.blood_group || 'N/A'}</td>
                                                 <td>
                                                     <div className="table-action-btns">
                                                         <button onClick={() => handleOpenUpdateModal(student)} className="table-action-btn table-update-btn">
@@ -704,27 +709,113 @@ export default function Students() {
                         <form onSubmit={handleUpdateSubmit} className="add-student-form">
                             <div className="form-grid">
                                 <div className="form-group"><label>Student Name *</label><input type="text" name="student_name" value={updateFormData.student_name} onChange={handleUpdateInputChange} required className="form-input" /></div>
-                                <div className="form-group"><label>Gender *</label>
+                                <div className="form-group">
+                                    <div className="label-row"><label>Gender *</label></div>
                                     <select name="gender" value={updateFormData.gender} onChange={handleUpdateInputChange} required className="form-input">
                                         <option value="">Select Gender</option>
-                                        <option value="M">M</option>
-                                        <option value="F">F</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
                                     </select>
                                 </div>
-                                <div className="form-group"><label>B-Form</label><input type="text" name="b_form" value={updateFormData.b_form} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Date of Birth</label><input type="date" name="dob" value={updateFormData.dob} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Admission Date</label><input type="date" name="admission_date" value={updateFormData.admission_date} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Father/Guardian's Name</label><input type="text" name="f_g_name" value={updateFormData.f_g_name} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Father/Guardian's CNIC</label><input type="text" name="f_g_cnic" value={updateFormData.f_g_cnic} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Father/Guardian's Contact</label><input type="text" name="f_g_contact" value={updateFormData.f_g_contact} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Address</label><input type="text" name="address" value={updateFormData.address} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Class *</label><input type="text" name="class_enrolled" value={updateFormData.class_enrolled} onChange={handleUpdateInputChange} required className="form-input" /></div>
-                                <div className="form-group"><label>Section</label><input type="text" name="section" value={updateFormData.section} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Group</label><input type="text" name="group" value={updateFormData.group} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Class of Admission</label><input type="text" name="class_of_admission" value={updateFormData.class_of_admission} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>Caste</label><input type="text" name="caste" value={updateFormData.caste} onChange={handleUpdateInputChange} className="form-input" /></div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>B-Form</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.b_form === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, b_form: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="b_form" value={updateFormData.b_form} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.b_form === 'N/A'} />
+                                </div>
+                                <div className="form-group"><label>Date of Birth</label><input type="date" name="dob" value={updateFormData.dob ? updateFormData.dob.substring(0,10) : ''} onChange={handleUpdateInputChange} className="form-input" /></div>
+                                <div className="form-group"><label>Admission Date</label><input type="date" name="admission_date" value={updateFormData.admission_date ? updateFormData.admission_date.substring(0,10) : ''} onChange={handleUpdateInputChange} className="form-input" /></div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Blood Group</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.blood_group === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, blood_group: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <select name="blood_group" value={updateFormData.blood_group} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.blood_group === 'N/A'}>
+                                        <option value="">Select</option>
+                                        <option value="A+">A+</option><option value="A-">A-</option>
+                                        <option value="B+">B+</option><option value="B-">B-</option>
+                                        <option value="O+">O+</option><option value="O-">O-</option>
+                                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                        <option value="N/A">N/A</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Father/Guardian's Name</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.f_g_name === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, f_g_name: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="f_g_name" value={updateFormData.f_g_name} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.f_g_name === 'N/A'} />
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Father/Guardian's CNIC</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.f_g_cnic === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, f_g_cnic: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="f_g_cnic" value={updateFormData.f_g_cnic} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.f_g_cnic === 'N/A'} />
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Father/Guardian's Contact</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.f_g_contact === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, f_g_contact: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="f_g_contact" value={updateFormData.f_g_contact} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.f_g_contact === 'N/A'} />
+                                </div>
+                                <div className="form-group form-group-wide">
+                                    <div className="label-row">
+                                        <label>Address</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.address === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, address: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="address" value={updateFormData.address} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.address === 'N/A'} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Class *</label>
+                                    <select name="class_enrolled" value={updateFormData.class_enrolled} onChange={handleUpdateInputChange} required className="form-input">
+                                        <option value="">Select</option>
+                                        {['PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Section</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.section === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, section: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="section" value={updateFormData.section} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.section === 'N/A'} />
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Group</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.group === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, group: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="group" value={updateFormData.group} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.group === 'N/A'} />
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Class of Admission</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.class_of_admission === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, class_of_admission: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <select name="class_of_admission" value={updateFormData.class_of_admission} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.class_of_admission === 'N/A'}>
+                                        <option value="">Select</option>
+                                        {['PG', 'Nur', 'Prep', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map(c => <option key={c} value={c}>{c}</option>)}
+                                        <option value="N/A">N/A</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <div className="label-row">
+                                        <label>Caste</label>
+                                        <label className="na-checkbox"><input type="checkbox" checked={updateFormData.caste === 'N/A'} onChange={(e) => setUpdateFormData(prev => ({...prev, caste: e.target.checked ? 'N/A' : ''}))} /> N/A</label>
+                                    </div>
+                                    <input type="text" name="caste" value={updateFormData.caste} onChange={handleUpdateInputChange} className="form-input" disabled={updateFormData.caste === 'N/A'} />
+                                </div>
                                 <div className="form-group"><label>Monthly Fee</label><input type="number" name="monthly_fee" value={updateFormData.monthly_fee} onChange={handleUpdateInputChange} className="form-input" /></div>
-                                <div className="form-group"><label>No Fee</label><input type="text" name="no_fee" value={updateFormData.no_fee} onChange={handleUpdateInputChange} className="form-input" /></div>
+                                <div className="form-group">
+                                    <label>No Fee</label>
+                                    <select name="no_fee" value={updateFormData.no_fee} onChange={handleUpdateInputChange} className="form-input">
+                                        <option value="">Select</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="modal-footer-btns" style={{ marginTop: '1.5rem' }}>
                                 <button type="button" className="modal-cancel-btn" onClick={() => setIsUpdateModalOpen(false)}>Cancel</button>

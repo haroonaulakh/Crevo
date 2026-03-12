@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\backend\test_import.py", line 4, in <module>
+    import supabase
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\supabase\__init__.py", line 1, in <module>
+    from postgrest import APIError as PostgrestAPIError
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\postgrest\__init__.py", line 7, in <module>
+    from ._async.client import AsyncPostgrestClient
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\postgrest\_async\client.py", line 15, in <module>
+    from .request_builder import AsyncRequestBuilder, AsyncRPCFilterRequestBuilder
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\postgrest\_async\request_builder.py", line 9, in <module>
+    from ..base_request_builder import (
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\postgrest\base_request_builder.py", line 22, in <module>
+    from pydantic import BaseModel
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\pydantic\__init__.py", line 372, in __getattr__
+    module = import_module(module_name, package=package)
+  File "C:\Users\DELL\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\pydantic\main.py", line 15, in <module>
+    from ._internal import (
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\pydantic\_internal\_decorators.py", line 15, in <module>
+    from ._core_utils import get_type_ref
+  File "C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\pydantic\_internal\_core_utils.py", line 15, in <module>
+    from pydantic_core import validate_core_schema as _validate_core_schema
+ImportError: cannot import name 'validate_core_schema' from 'pydantic_core' (C:\Users\DELL\Desktop\Crevo\Crevo\venv\lib\site-packages\pydantic_core\__init__.py)

@@ -1,0 +1,1677 @@
+/* ═══════════════════════════════════════════════════════════════
+   Timetable Generator – Premium Styling v2
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+/* ── Container ─────────────────────────────────────────────── */
+.tt-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    padding: 1.5rem 2rem 3rem;
+    font-family: 'Inter', sans-serif;
+    color: #e2e8f0;
+}
+
+.tt-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 1rem;
+    color: #94a3b8;
+}
+
+.tt-spinner {
+    animation: spin 1s linear infinite;
+    color: #6366f1;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.tt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.tt-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.tt-back-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
+}
+
+.tt-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #818cf8, #6366f1, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Toast ──────────────────────────────────────────────────── */
+.tt-toast {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.tt-toast-success {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+}
+
+.tt-toast-error {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ── Step Indicators ────────────────────────────────────────── */
+.tt-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tt-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tt-step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    color: #64748b;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.tt-step-active .tt-step-circle {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    border-color: #818cf8;
+    color: white;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+.tt-step-done .tt-step-circle {
+    background: linear-gradient(135deg, #059669, #10b981);
+    border-color: #10b981;
+    color: white;
+}
+
+.tt-step-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.tt-step-active .tt-step-label {
+    color: #e2e8f0;
+}
+
+.tt-step-done .tt-step-label {
+    color: #10b981;
+}
+
+.tt-step-line {
+    width: 40px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 0.6rem;
+    flex-shrink: 0;
+}
+
+.tt-step-done+.tt-step-line,
+.tt-step-done .tt-step-line {
+    background: #10b981;
+}
+
+/* ── Card ──────────────────────────────────────────────────── */
+.tt-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    backdrop-filter: blur(12px);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.tt-card-wide {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.tt-card-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    color: #e2e8f0;
+}
+
+.tt-card-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Teacher Courses (Step 1) ──────────────────────────────── */
+.tt-teacher-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tt-teacher-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0.875rem;
+    padding: 1rem 1.2rem;
+    transition: all 0.2s;
+}
+
+.tt-teacher-row:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.tt-teacher-info {
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.tt-teacher-name {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+}
+
+.tt-teacher-id {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.tt-teacher-config {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tt-teacher-subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.tt-subject-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(129, 140, 248, 0.15));
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    padding: 0.3rem 0.7rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.tt-chip-remove {
+    background: none;
+    border: none;
+    color: #f87171;
+    cursor: pointer;
+    display: flex;
+    padding: 0;
+    transition: all 0.2s;
+}
+
+.tt-chip-remove:hover {
+    color: #ef4444;
+    transform: scale(1.2);
+}
+
+.tt-add-subject-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px dashed rgba(99, 102, 241, 0.4);
+    color: #818cf8;
+    padding: 0.3rem 0.6rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.tt-add-subject-select option {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+/* ── Class Range Selector ──────────────────────────────────── */
+.tt-range-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tt-range-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.tt-range-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #94a3b8;
+    transition: all 0.2s;
+}
+
+.tt-range-btn:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.08);
+}
+
+.tt-range-btn.tt-range-active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(129, 140, 248, 0.2));
+    border-color: rgba(99, 102, 241, 0.5);
+    color: #a5b4fc;
+}
+
+.tt-priority-badge {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.tt-priority-secondary {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.tt-save-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 0.625rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+}
+
+.tt-save-row-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.tt-save-row-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Class Configuration (Step 2) ──────────────────────────── */
+.tt-class-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tt-class-row {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 0.875rem;
+    padding: 1rem 1.2rem;
+    transition: all 0.2s;
+}
+
+.tt-class-row:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.tt-class-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.tt-class-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    flex: 1;
+}
+
+.tt-class-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: white;
+    padding: 0.3rem 0.9rem;
+    border-radius: 0.5rem;
+    min-width: 70px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.tt-section-count {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.tt-class-subjects-section {
+    margin-bottom: 0.75rem;
+}
+
+.tt-subjects-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #818cf8;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.tt-class-subjects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tt-class-subject-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    outline: none;
+    min-width: 80px;
+    cursor: pointer;
+}
+
+.tt-class-subject-select option {
+    background: #1e293b;
+}
+
+/* ── Incharge per section ───────────────────────────────────── */
+.tt-incharge-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tt-section-incharge {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.625rem;
+    flex-wrap: wrap;
+}
+
+.tt-section-badge {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.25), rgba(129, 140, 248, 0.2));
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    color: #c4b5fd;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.375rem;
+    flex-shrink: 0;
+}
+
+.tt-section-incharge label {
+    font-weight: 600;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.tt-incharge-select {
+    flex: 1;
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
+    padding: 0.45rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.tt-incharge-select option {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+/* ── Time Slots (Step 3) ────────────────────────────────────── */
+.tt-slot-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tt-slot-num-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.tt-slot-num-input {
+    width: 70px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    text-align: center;
+    outline: none;
+    font-weight: 700;
+}
+
+.tt-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tt-slot-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 1.2rem 1.25rem;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tt-slot-item:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.tt-slot-break {
+    background: rgba(251, 191, 36, 0.06) !important;
+    border-color: rgba(251, 191, 36, 0.25) !important;
+}
+
+.tt-slot-break:hover {
+    border-color: rgba(251, 191, 36, 0.45) !important;
+    background: rgba(251, 191, 36, 0.1) !important;
+}
+
+.tt-slot-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tt-slot-number {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    color: #818cf8;
+    font-size: 0.85rem;
+    background: rgba(99, 102, 241, 0.12);
+    padding: 0.25rem 0.7rem;
+    border-radius: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+.tt-break-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: #fbbf24;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tt-break-toggle input {
+    accent-color: #fbbf24;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.tt-break-label {
+    text-align: center;
+    color: #fbbf24;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.7rem 0;
+    letter-spacing: 0.05em;
+}
+
+.tt-time-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.tt-time-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #e2e8f0;
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.625rem;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.tt-time-input:focus {
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+.tt-time-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+}
+
+.tt-time-separator {
+    color: #64748b;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.tt-confirm-replace {
+    margin-bottom: 1.5rem;
+}
+
+.tt-confirm-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #f87171;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.tt-confirm-checkbox input {
+    accent-color: #ef4444;
+}
+
+/* ── Fixed Assignments ─────────────────────────────────────── */
+.tt-fixed-section {
+    background: rgba(99, 102, 241, 0.04);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tt-fixed-header {
+    margin-bottom: 1rem;
+}
+
+.tt-fixed-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #818cf8;
+    margin: 0 0 0.25rem;
+}
+
+.tt-fixed-desc {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.tt-fixed-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tt-fixed-select {
+    flex: 1;
+    min-width: 120px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #e2e8f0;
+    padding: 0.5rem 0.65rem;
+    border-radius: 0.625rem;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.tt-fixed-select:focus {
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+.tt-fixed-select-sm {
+    flex: 0.6;
+    min-width: 90px;
+}
+
+.tt-fixed-remove {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+}
+
+.tt-fixed-remove:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.tt-fixed-add {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px dashed rgba(99, 102, 241, 0.3);
+    color: #818cf8;
+    padding: 0.55rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+}
+
+.tt-fixed-add:hover {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+/* ── Navigation Buttons ─────────────────────────────────────── */
+.tt-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.tt-nav-right {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.tt-prev-btn,
+.tt-next-btn,
+.tt-save-btn,
+.tt-generate-btn,
+.tt-export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s;
+}
+
+.tt-prev-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #94a3b8;
+}
+
+.tt-prev-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+.tt-next-btn {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: white;
+}
+
+.tt-next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(99, 102, 241, 0.35);
+}
+
+.tt-save-btn {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+}
+
+.tt-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.35);
+}
+
+.tt-save-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.tt-generate-btn {
+    background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    color: white;
+}
+
+.tt-generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(124, 58, 237, 0.35);
+}
+
+.tt-generate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tt-export-btn {
+    background: linear-gradient(135deg, #0891b2, #22d3ee);
+    color: white;
+}
+
+.tt-export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(34, 211, 238, 0.35);
+}
+
+/* ── Timetable Header Row ───────────────────────────────────── */
+.tt-timetable-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.tt-timetable-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.tt-workload-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #94a3b8;
+    transition: all 0.2s;
+}
+
+.tt-workload-toggle:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+}
+
+.tt-workload-toggle.tt-workload-active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(129, 140, 248, 0.15));
+    border-color: rgba(99, 102, 241, 0.4);
+    color: #a5b4fc;
+}
+
+/* ── Timetable Layout ───────────────────────────────────────── */
+.tt-timetable-layout {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+.tt-timetable-wrapper {
+    overflow-x: auto;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex: 1;
+    min-width: 0;
+}
+
+.tt-timetable-wrapper.tt-with-workload {
+    flex: 1;
+}
+
+/* ── Timetable Grid ─────────────────────────────────────────── */
+.tt-timetable {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+.tt-timetable thead th {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.tt-th-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: center;
+}
+
+.tt-th-slot-num {
+    font-size: 0.65rem;
+    color: #818cf8;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.tt-th-duration {
+    font-size: 0.75rem;
+}
+
+.tt-th-class {
+    background: rgba(99, 102, 241, 0.25) !important;
+    min-width: 100px;
+    position: sticky;
+    left: 0;
+    z-index: 3 !important;
+}
+
+.tt-th-break {
+    background: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+}
+
+.tt-timetable tbody td {
+    padding: 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    vertical-align: top;
+    min-width: 110px;
+}
+
+.tt-td-class {
+    font-weight: 700;
+    color: #818cf8;
+    font-size: 0.8rem;
+    background: rgba(99, 102, 241, 0.08);
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 100px;
+    white-space: nowrap;
+}
+
+.tt-td-break {
+    background: rgba(251, 191, 36, 0.06);
+    color: #fbbf24;
+    font-size: 1.2rem;
+}
+
+.tt-td-cell {
+    position: relative;
+}
+
+.tt-td-needs-teacher {
+    background: rgba(251, 191, 36, 0.05);
+    border: 1px dashed rgba(251, 191, 36, 0.3) !important;
+}
+
+/* Conflict cell – teacher in same slot across classes */
+.tt-td-conflict {
+    background: rgba(239, 68, 68, 0.08) !important;
+    border: 2px solid rgba(239, 68, 68, 0.5) !important;
+    animation: conflictPulse 2s ease-in-out infinite;
+}
+
+@keyframes conflictPulse {
+
+    0%,
+    100% {
+        border-color: rgba(239, 68, 68, 0.5);
+    }
+
+    50% {
+        border-color: rgba(239, 68, 68, 0.9);
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+    }
+}
+
+.tt-td-conflict .tt-cell-teacher {
+    color: #f87171;
+}
+
+/* Swap-selected cell */
+.tt-td-swap-selected {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border: 2px solid rgba(16, 185, 129, 0.6) !important;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
+}
+
+/* Swap target cell */
+.tt-td-swap-target {
+    border: 1px dashed rgba(16, 185, 129, 0.4) !important;
+    cursor: pointer;
+}
+
+.tt-td-swap-target:hover {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border-color: rgba(16, 185, 129, 0.7) !important;
+}
+
+/* Swap slot button inside cell */
+.tt-swap-slot-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    margin: 0.15rem auto 0;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #34d399;
+    padding: 0.15rem 0.45rem;
+    border-radius: 1rem;
+    font-size: 0.62rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    opacity: 0;
+}
+
+.tt-td-cell:hover .tt-swap-slot-btn {
+    opacity: 1;
+}
+
+.tt-swap-slot-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Swap button wrapper for mode picker */
+.tt-swap-btn-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+/* Swap mode picker dropdown */
+.tt-swap-mode-picker {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 0.6rem;
+    padding: 0.3rem;
+    min-width: 130px;
+    z-index: 120;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.tt-swap-mode-option {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s;
+    text-align: left;
+}
+
+.tt-swap-mode-both {
+    color: #34d399;
+}
+
+.tt-swap-mode-both:hover {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.tt-swap-mode-teacher {
+    color: #a5b4fc;
+}
+
+.tt-swap-mode-teacher:hover {
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.tt-swap-mode-subject {
+    color: #fbbf24;
+}
+
+.tt-swap-mode-subject:hover {
+    background: rgba(251, 191, 36, 0.15);
+}
+
+/* Subject active swap highlight */
+.tt-cell-swap-active {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+    border-radius: 0.3rem;
+    font-weight: 700 !important;
+}
+
+/* Swap mode banner */
+.tt-swap-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.06));
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 0.75rem;
+    padding: 0.6rem 1rem;
+    margin-top: 0.75rem;
+    color: #34d399;
+    font-size: 0.85rem;
+    font-weight: 600;
+    animation: fadeIn 0.2s ease;
+}
+
+.tt-swap-cancel-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tt-swap-cancel-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.tt-cell-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-height: 50px;
+    justify-content: center;
+}
+
+.tt-cell-teacher {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.4rem;
+    transition: all 0.15s;
+}
+
+.tt-cell-teacher:hover {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.tt-assign-prompt {
+    color: #fbbf24;
+    font-weight: 600;
+    font-size: 0.72rem;
+    font-style: italic;
+}
+
+.tt-cell-subject {
+    font-size: 0.68rem;
+    color: #818cf8;
+    cursor: pointer;
+    padding: 0.15rem 0.3rem;
+    border-radius: 0.3rem;
+    transition: all 0.15s;
+}
+
+.tt-cell-subject:hover {
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.tt-empty {
+    color: #475569;
+    font-size: 0.75rem;
+}
+
+.tt-empty-sub {
+    color: #475569;
+    font-style: italic;
+    font-size: 0.65rem;
+}
+
+/* ── Swap/Subject Dropdowns ─────────────────────────────────── */
+.tt-swap-dropdown,
+.tt-subject-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+    min-width: 200px;
+    z-index: 100;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.15s ease;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.tt-swap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.tt-swap-header button {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.tt-swap-remove {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    width: 100%;
+    background: rgba(239, 68, 68, 0.1);
+    border: none;
+    color: #f87171;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-bottom: 0.3rem;
+    transition: 0.15s;
+}
+
+.tt-swap-remove:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.tt-swap-option,
+.tt-subject-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #e2e8f0;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: 0.15s;
+    text-align: left;
+}
+
+.tt-swap-option:hover,
+.tt-subject-option:hover {
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.tt-swap-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2rem;
+    font-weight: 600;
+}
+
+.tt-swap-free .tt-swap-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.tt-swap-busy .tt-swap-badge {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.tt-swap-warn {
+    border-left: 2px solid rgba(251, 146, 60, 0.5);
+}
+
+.tt-warn-icon {
+    color: #fb923c;
+    margin-left: 0.25rem;
+    vertical-align: middle;
+}
+
+.tt-swap-empty {
+    text-align: center;
+    color: #475569;
+    font-size: 0.75rem;
+    padding: 0.5rem;
+}
+
+/* ── Free teachers row ──────────────────────────────────────── */
+.tt-free-row td {
+    border-top: 2px solid rgba(99, 102, 241, 0.2);
+}
+
+.tt-td-free-label {
+    font-weight: 700;
+    color: #10b981 !important;
+}
+
+.tt-td-free {
+    padding: 0.5rem 0.3rem;
+}
+
+.tt-free-chip {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin: 0.1rem;
+}
+
+/* ── Teacher Workload Panel ─────────────────────────────────── */
+.tt-workload-panel {
+    width: 340px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 1rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: 1rem;
+}
+
+.tt-workload-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tt-workload-header h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+}
+
+.tt-workload-header button {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+    transition: 0.15s;
+}
+
+.tt-workload-header button:hover {
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tt-workload-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.tt-workload-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.75rem;
+    padding: 0.7rem 0.8rem;
+    transition: 0.2s;
+}
+
+.tt-workload-item:hover {
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+.tt-workload-item.tt-workload-warn {
+    border-color: rgba(251, 146, 60, 0.3);
+    background: rgba(251, 146, 60, 0.04);
+}
+
+.tt-workload-teacher-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.tt-workload-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+}
+
+.tt-workload-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.15);
+    padding: 0.15rem 0.5rem;
+    border-radius: 1rem;
+}
+
+.tt-workload-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.12);
+    padding: 0.15rem 0.45rem;
+    border-radius: 1rem;
+}
+
+.tt-workload-lectures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.tt-workload-lecture-chip {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.375rem;
+}
+
+/* Conflict in workload panel */
+.tt-workload-conflict {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    background: rgba(239, 68, 68, 0.06) !important;
+}
+
+.tt-workload-conflict-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+    padding: 0.15rem 0.5rem;
+    border-radius: 1rem;
+    animation: conflictPulse 2s ease-in-out infinite;
+}
+
+.tt-workload-lecture-conflict {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #f87171 !important;
+}
+
+.tt-workload-empty {
+    text-align: center;
+    color: #475569;
+    font-size: 0.85rem;
+    padding: 1.5rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .tt-timetable-layout {
+        flex-direction: column;
+    }
+
+    .tt-workload-panel {
+        width: 100%;
+        max-height: 50vh;
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .tt-container {
+        padding: 1rem;
+    }
+
+    .tt-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .tt-title {
+        font-size: 1.4rem;
+    }
+
+    .tt-steps {
+        gap: 0.25rem;
+    }
+
+    .tt-step-line {
+        width: 20px;
+        margin: 0 0.3rem;
+    }
+
+    .tt-step-label {
+        font-size: 0.7rem;
+        display: none;
+    }
+
+    .tt-card {
+        padding: 1.25rem;
+    }
+
+    .tt-teacher-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tt-teacher-info {
+        min-width: auto;
+    }
+
+    .tt-class-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tt-timetable-header-row {
+        flex-direction: column;
+    }
+
+    .tt-timetable-actions {
+        width: 100%;
+    }
+
+    .tt-nav-buttons {
+        flex-direction: column;
+    }
+
+    .tt-nav-right {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .tt-prev-btn,
+    .tt-next-btn,
+    .tt-save-btn,
+    .tt-generate-btn,
+    .tt-export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tt-slots-grid {
+        grid-template-columns: 1fr;
+    }
+}
